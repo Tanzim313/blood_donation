@@ -20,6 +20,9 @@ import BloodDonationDetails from './Component/Home/BloodDonationDetails.jsx';
 import Donate from './Component/Home/Donate.jsx';
 import { AllUsers } from './Component/Dashboard/Admin/AllUsers.jsx';
 import AllBloodRequest from './Component/Dashboard/Admin/AllBloodRequest.jsx';
+import AllBloodVolunteer from './Component/Dashboard/Volunteer/AllBloodVolunteer.jsx';
+import Funding from './Component/Home/Funding.jsx';
+import FundingSuccess from './Component/Home/FundingSuccess.jsx';
 
 
 const router = createBrowserRouter([
@@ -59,6 +62,14 @@ const router = createBrowserRouter([
             
             return { districts, upozilas };
             }
+      },
+      {
+        path:'/funding',
+        element: <Funding/>
+      }
+      ,{
+        path:"/funding-success",
+        element: <FundingSuccess/>
       }
     ]
   },
@@ -104,6 +115,11 @@ const router = createBrowserRouter([
       {
         path:'all-donations',
         element: <AllBloodRequest/>
+      }
+      ,
+      {
+        path:'all-donations-volunteer',
+        element: <AllBloodVolunteer/>
       }
       
 
