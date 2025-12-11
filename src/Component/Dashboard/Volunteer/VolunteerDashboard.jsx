@@ -2,14 +2,15 @@ import React from "react";
 
 
 
-const Volunteer =()=>{
+const VolunteerDashboard =()=>{
 
     return(
         <div>
+         <h1>Volunteer</h1>
             
         </div>
     )
 
 }
 
-export default Volunteer;
+export default VolunteerDashboard;

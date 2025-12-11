@@ -68,6 +68,13 @@ const Dashboard = () => {
             </>
           )}
 
+          {role === "volunteer" && (
+            <>
+              <li><Link to="/dashboard">Volunteer Dashboard</Link></li>
+              <li><Link to="/dashboard/all-donations-volunteer">All Donations</Link></li>
+            </>
+          )}
+
 
          
           {role === "donor" && (
