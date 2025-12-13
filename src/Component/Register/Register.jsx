@@ -7,7 +7,8 @@ import { Link, useLoaderData, useNavigate } from "react-router";
 import { AuthContext } from "../../Authprovider/AuthContext";
 import { sendEmailVerification, updateProfile } from "firebase/auth";
 import { auth } from "../../firebase.init";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 
 const Register =()=>{
@@ -21,28 +22,51 @@ const Register =()=>{
     const [showConfirm,setShowConfirm] = useState(false);
 
 
-    const {districts,upozilas} = useLoaderData();
+    //const {districts,upozilas} = useLoaderData();
 
     const [selectedDistrict,setSelectedDistrict] = useState("");
-    const [filteredUpozilas,setFilteredUpozilas] = useState([]);
     
+    //const [filteredUpozilas,setFilteredUpozilas] = useState([]);
+    
+    const axios = useAxiosSecure();
+
+    //districts
+    const {data:district=[]}=useQuery({
+
+        queryKey: ["district"],
+        queryFn: async()=>{
+            const res = await axios.get("/district");
+
+            return res.data;
+        },
+
+    });
+
+    //upazilas
+
+    const {data:upozila = []} = useQuery({
+        queryKey: ["upazila"],
+        queryFn: async()=>{
+            const res = await axios.get("/upazila");
+
+            return res.data;
+        }
+    })
+
+    const filteredUpozilas = upozila.filter(
+        (u)=>u.district_id === selectedDistrict
+    );
+
+    console.log("selectedDistrict:", selectedDistrict);
+    console.log("upozila_list:", upozila);
 
 
-    const handleDistrictChange = (e)=>{
-        const selected = e.target.value;
-        setSelectedDistrict(selected);
-        console.log("selected:",selected)
-
-
-        const filtered = upozilas.filter(upozila=>upozila.district_id === selected);
-        setFilteredUpozilas(filtered);
-
-
-    }
 
     
     const handleRegister =(event)=>{
         event.preventDefault();
+
+        const form = event.target;
         const email = event.target.email.value;
         const password = event.target.password.value;
         const terms = event.target.terms.checked;
@@ -103,9 +127,8 @@ const Register =()=>{
                 const profile ={
                     displayName:name,
                     photoURL:photo
-
-
                 }
+
 
                 updateProfile(result.user,profile)
                 .then(()=>{})
@@ -118,7 +141,7 @@ const Register =()=>{
                         alert('please login to your email and verify our email')
                     })
                 
-                const districtName = districts.find(d => d.id === selectedDistrict)?.name || "";
+                const districtName = district.find(d => d.id === selectedDistrict)?.name || "";
                 const upozilaName = filteredUpozilas.find(u => u.id === upozila)?.name || "";   
 
                 userMutation.mutate({
@@ -156,12 +179,9 @@ const Register =()=>{
 
     const userMutation = useMutation({
         mutationFn: async(userData)=>{
-            const res = await fetch("http://localhost:3000/users",{
-                method: "POST",
-                headers: {"Content-Type":"application/json"},
-                body:JSON.stringify(userData),
-            });
-            return res.json();
+            const res = await axios.post("/users",userData);
+
+            return res.data;
         },
         onSuccess:()=>{
             console.log("User saved to db successfully!!")
@@ -207,19 +227,30 @@ const Register =()=>{
             </select>
 
             <label className="label">District</label>
-                  <select name="district" className="select select-bordered" onChange={handleDistrictChange} required>
+                  <select 
+                  name="district" 
+                  className="select select-bordered" 
+                  value={selectedDistrict}
+                  onChange={(e)=>setSelectedDistrict(e.target.value)} required>
+                    
                     <option value="">Select District</option>
-                    {districts.map((district, index) => (
+                    {district.map((district, index) => (
                       <option key={index} value={district.id}>{district.name}</option>
                     ))}
                   </select>
 
                   <label className="label">Upozila</label>
-                  <select name="upozila" className="select select-bordered" required>
-                    <option value="">Select Upozila</option>
+                  <select 
+                  name="upozila" 
+                  className="select select-bordered" 
+                  required>
+
+                <option value="">Select Upozila</option>
+
                     {filteredUpozilas.map((upozila, index) => (
                       <option key={index} value={upozila.id}>{upozila.name}</option>
                     ))}
+
                   </select>
             
             
