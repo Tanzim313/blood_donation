@@ -1,11 +1,14 @@
 import React, { use, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AuthContext } from "../../../Authprovider/AuthContext";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import { BsThreeDotsVertical } from "react-icons/bs";
 
 const AllBloodVolunteer=()=>{
-
+    
+    const axios = useAxiosSecure();
+    const queryClient = useQueryClient();
     const {user} = use(AuthContext);
-
     const [statusFilter,setStatusFilter] = useState("all")
 
     const {data:donations =[],isLoading,isError} = useQuery({
@@ -26,8 +29,26 @@ const AllBloodVolunteer=()=>{
             },
             enabled: !!user,
         });
+
+        const statusMutation = useMutation({
+            mutationFn: async({id,status})=>{
+                const res = await axios.patch(`donation-status/${id}`,{
+                    status,
+                });
+
+                return res.data;
+            },
+            onSuccess:()=>{
+                queryClient.invalidateQueries(["donations"]);
+            },
+        })
+
+        const handleStatusUpdate = (id,status)=>{
+            statusMutation.mutate({id,status});
+        };
     
-    
+        
+        
         if (!user) return <p>Loading user...</p>;
         if (isLoading) return <p>Loading donation requests...</p>;
         if (isError) return <p>Failed to load donation requests.</p>;
@@ -37,11 +58,12 @@ const AllBloodVolunteer=()=>{
         .sort((a,b)=> new Date(b.donationDate)-new Date(a.donationDate));
 
 
-    return(
-        <div>
 
-            <div>
-                <select className="select select-bordered" 
+    return(
+        <div className="flex flex-col justify-center items-center">
+
+            <div className="mt-10 mb-10">
+                <select className="select select-bordered w-[280px]" 
                 value={statusFilter}
                 onChange={(e)=>setStatusFilter(e.target.value)}
                 >
@@ -58,7 +80,7 @@ const AllBloodVolunteer=()=>{
 
 
              {recentDonations.length > 0 &&(
-        <div className="p-4 flex flex-col items-center text-center">
+        <div className="p-4 flex flex-col items-center text-center w-full ">
 
            <div className="p-4 w-full overflow-x-auto  border border-base-content/5 bg-base-100">
             <table className="table">
@@ -87,24 +109,88 @@ const AllBloodVolunteer=()=>{
                 <td>{donation.donationStatus}</td>
                 <td>{donation.donationStatus === "inprogress" ? (
                     <div>
-                        <p>Name:</p>
-                        <p>Email:</p>
+                        <p>Name:{donation.donorEmail}</p>
+                        <p>Email:{donation.donorName}</p>
                     </div>
                 ):(
                     <p>Not Assigned</p>
                 )}</td>
                 <td>
-                    {donation.donationStatus === "inprogress" &&(
-                        <div className="flex flex-col gap-2 mb-2">
-                            <button className="btn btn-success" >Done</button>
-                            <button className="btn btn-success" >Cancel</button>
-                        </div>
-                    )}
-                    <div className="flex flex-col gap-2">
-                    <button className="btn btn-success">View</button>
-                    <button className="btn btn-success">Edit</button>
-                    <button className="btn btn-success">Delete</button>
+                    <div className="dropdown dropdown-left">
+                        
+                        <label tabIndex={0} className="btn btn-ghost btn-sm">
+                            <BsThreeDotsVertical />
+                        </label>
+
+                        <ul
+                            tabIndex={0}
+                            className="dropdown-content menu p-2 shadow bg-red-600 rounded-box w-44 text-white text-center font-bold "
+                        >
+                        {donation.donationStatus === "pending" && (
+
+                            <li>
+                                <button
+                                    onClick={()=>
+                                        handleStatusUpdate(
+                                            donation._id,
+                                            "inprogress"
+                                        )
+                                    }
+                                >
+                                    inprogress
+                                </button>
+                            </li>
+                        )}
+
+
+                        {donation.donationStatus === "inprogress" && (
+                        <>
+                            <li>
+                                <button
+                                    onClick={()=>
+                                        handleStatusUpdate(
+                                            donation._id,
+                                            "done"
+                                        )
+                                    }
+                                >
+                                    done
+                                </button>
+                            </li>
+
+                            <li>
+                                <button
+                                    onClick={()=>
+                                        handleStatusUpdate(
+                                            donation._id,
+                                            "cancel"
+                                        )
+                                    }
+                                >
+                                    cancel
+                                </button>
+                            </li>
+                        </>
+                            
+                        )}
+
+                        {donation.donationStatus === "done"?(
+                            <li>
+                               Done success fully
+                            </li>
+                            ):(
+                            <li>
+
+                                cancel  success fully
+
+                            </li>
+                            )}
+
+                        
+                        </ul>
+
                     </div>
+                   
                 </td>
             </tr>
       ))}
@@ -118,7 +204,7 @@ const AllBloodVolunteer=()=>{
 )}
 
 </div>
-)
+) 
 
 }
 

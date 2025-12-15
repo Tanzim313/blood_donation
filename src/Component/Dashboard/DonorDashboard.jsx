@@ -1,12 +1,18 @@
 import React, { use } from "react";
 import { AuthContext } from "../../Authprovider/AuthContext";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router";
+import { Link, useParams } from "react-router";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 
 const DonorDashboard =()=>{
 
     const {user} = use(AuthContext);
+
+    const axios = useAxiosSecure();
+
+
+
 
     const {data:donations =[],isLoading,isError} = useQuery({
 
@@ -28,6 +34,27 @@ const DonorDashboard =()=>{
     const recentDonations = donations
     .sort((a,b)=> new Date(b.donationDate)-new Date(a.donationDate))
     .slice(0,3);
+
+
+
+    const handleDelete= async(id)=>{
+        const confirm = window.confirm("Are You Sure?")
+        if(!confirm) return;
+
+        await axios.delete(`/donations-request/${id}`);
+
+        refetch();
+
+
+    };
+
+
+    const handleStatus = async(id,donationStatus)=>{
+        await axios.patch(`/donations-request/status/${id}`,{donationStatus});
+        console.log("status:",donationStatus)
+
+        refetch();
+    }
 
 
 
@@ -68,8 +95,8 @@ const DonorDashboard =()=>{
                 <td>{donation.donationStatus}</td>
                 <td>{donation.donationStatus === "inprogress" ? (
                     <div>
-                        <p>Name:</p>
-                        <p>Email:</p>
+                        <p>{donation.donorEmail}</p>
+                        <p>{donation.donorName}</p>
                     </div>
                 ):(
                     <p>Not Assigned</p>
@@ -77,14 +104,23 @@ const DonorDashboard =()=>{
                 <td>
                     {donation.donationStatus === "inprogress" &&(
                         <div className="flex flex-col gap-2 mb-2">
-                            <button className="btn btn-success" >Done</button>
-                            <button className="btn btn-success" >Cancel</button>
+                            <button
+                            onClick={()=>handleStatus(donation._id,"done")} 
+                            className="btn btn-success" >Done</button>
+                            <button
+                            onClick={()=>handleStatus(donation._id,"cancel")}
+                            className="btn btn-success" >Cancel</button>
                         </div>
                     )}
                     <div className="flex flex-col gap-2">
-                    <button className="btn btn-success">View</button>
-                    <button className="btn btn-success">Edit</button>
-                    <button className="btn btn-success">Delete</button>
+                    <Link to={`/dashboard/donation-request/${donation._id}`} className="btn btn-success">View</Link>
+                    
+                    <Link to={`/dashboard/donation-edit/${donation._id}`} className="btn btn-success">Edit</Link>
+
+
+                    <button
+                    onClick={()=>handleDelete(donation._id)}
+                    className="btn btn-success">Delete</button>
                     </div>
                 </td>
             </tr>

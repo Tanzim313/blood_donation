@@ -38,10 +38,10 @@ const AllBloodRequest=()=>{
 
 
     return(
-        <div>
+        <div className="flex flex-col justify-center items-center mt-20">
 
-            <div>
-                <select className="select select-bordered" 
+            <div className="mb-10">
+                <select className="select select-bordered w-[280px]" 
                 value={statusFilter}
                 onChange={(e)=>setStatusFilter(e.target.value)}
                 >
@@ -58,7 +58,7 @@ const AllBloodRequest=()=>{
 
 
              {recentDonations.length > 0 &&(
-        <div className="p-4 flex flex-col items-center text-center">
+        <div className="p-4 flex flex-col items-center text-center w-full">
 
            <div className="p-4 w-full overflow-x-auto  border border-base-content/5 bg-base-100">
             <table className="table">
@@ -87,8 +87,8 @@ const AllBloodRequest=()=>{
                 <td>{donation.donationStatus}</td>
                 <td>{donation.donationStatus === "inprogress" ? (
                     <div>
-                        <p>Name:</p>
-                        <p>Email:</p>
+                        <p>Name:{donation.donorName}</p>
+                        <p>Email:{donation.donorEmail}</p>
                     </div>
                 ):(
                     <p>Not Assigned</p>

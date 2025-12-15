@@ -1,49 +1,77 @@
 import React, { use, useState } from "react";
 import { auth } from "../../firebase.init";
 import { AuthContext } from "../../Authprovider/AuthContext";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useLoaderData } from "react-router";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 
 const CreateDonation =()=>{
 
     const {user} = use(AuthContext);
+    const axios = useAxiosSecure();
 
     console.log("user:",user);
 
-    const {districts,upozilas} = useLoaderData();
+    //const {districts,upozilas} = useLoaderData();
 
     const [selectedDistrict,setSelectedDistrict] = useState("");
-    const [filteredUpozilas,setFilteredUpozilas] = useState([]);
+    //const [filteredUpozilas,setFilteredUpozilas] = useState([]);
 
-    const handleDistrictChange = (e)=>{
-        const selected = e.target.value;
-        setSelectedDistrict(selected);
-        console.log("selected:",selected)
+    
+    const {data:currentUser = {}}=useQuery({
+        
+        queryKey: ["currentUser",user?.email],
+        enabled: !!user?.email,
+
+        queryFn: async()=>{
+            const res = await axios.get(`/currentUsers?email=${user.email}`);
+
+            return res.data;
+        }
+    })
 
 
-        const filtered = upozilas.filter(upozila=>upozila.district_id === selected);
-        setFilteredUpozilas(filtered);
+    
+    const {data:district = []}=useQuery({
+        queryKey: ["district"],
+        queryFn: async()=>{
+            const res = await axios.get("/district");
+
+            return res.data;
+        }
+    })
+
+    const {data:upazila = []}=useQuery({
+        queryKey:["upazila"],
+        queryFn: async()=>{
+            const res = await axios.get("upazila");
+
+            return res.data;
+        }
+    })
+
+    const filteredUpozilas = upazila.filter(u=>u.district_id === selectedDistrict);
 
 
-    }
-
-
+    
     const mutation = useMutation({
         mutationFn: async (donationData)=>{
-            const res = await fetch("http://localhost:3000/donations-request",{
-                method: "POST",
-                headers:{"content-type":"application/json"},
-                body: JSON.stringify(donationData),
-
-            });
-            return res.json();
+            const res = await axios.post("/donations-request",donationData);
+            return res.data;
         },
 
         onSuccess: ()=>{
                 alert("Donation Request Created Successfully!");
         },
     });
+
+
+   
+
+    const districtName = district.find(d => d.id === selectedDistrict)?.name || "";
+    
+
 
 
     // submit handle...
@@ -54,6 +82,10 @@ const CreateDonation =()=>{
 
         const form = e.target;
 
+        const selectedUpozilaId = form.upozila.value;
+
+        const upozilaName = filteredUpozilas.find(u => u.id === selectedUpozilaId)?.name || "";   
+
 
         const donationData={
 
@@ -61,8 +93,8 @@ const CreateDonation =()=>{
             requesterEmail: user?.email,
 
             recipientName: form.recipientName.value,
-            recipientDistrict: form.district.value,
-            recipientUpazila: form.upozila.value,
+            recipientDistrict: districtName,
+            recipientUpazila: upozilaName,
 
             hospitalName: form.hospitalName.value,
             fullAddress: form.fullAddress.value,
@@ -84,7 +116,10 @@ const CreateDonation =()=>{
 
 
     return(
+        
+        
         <div>
+        {currentUser?.status === "active"?(
             <div className="mt-10 flex flex-col justify-center items-center text-center">
                 <h2 className="mb-10 text-4xl font-bold">Create Donation Request</h2>
 
@@ -116,9 +151,16 @@ const CreateDonation =()=>{
                     placeholder="" />
 
                 <label className="label">District</label>
-                    <select name="district" className="select select-bordered" onChange={handleDistrictChange} required>
+                    <select 
+                    name="district" 
+                    className="select select-bordered"
+                    value={selectedDistrict} 
+                    onChange={(e)=>setSelectedDistrict(e.target.value)} 
+                    required>
+
                     <option value="">Select District</option>
-                    {districts.map((district, index) => (
+
+                    {district.map((district, index) => (
                     <option key={index} value={district.id}>{district.name}</option>
                     ))}
                 </select>
@@ -187,8 +229,17 @@ const CreateDonation =()=>{
                 
                 </form>
             </div>
+            ):(
+
+                <div className="text-center text-red-600 text-2xl font-semibold">
+                    You are blocked.You Cannot Create a donation request.
+                </div>
+
+            )
+            }
 
         </div>
+        
     )
 }
 

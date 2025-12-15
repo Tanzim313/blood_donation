@@ -23,6 +23,9 @@ import AllBloodRequest from './Component/Dashboard/Admin/AllBloodRequest.jsx';
 import AllBloodVolunteer from './Component/Dashboard/Volunteer/AllBloodVolunteer.jsx';
 import Funding from './Component/Home/Funding.jsx';
 import FundingSuccess from './Component/Home/FundingSuccess.jsx';
+import Search from './Component/Home/Search.jsx';
+import DonationDetails from './Component/Dashboard/DonationDetails.jsx';
+import DonationEdit from './Component/Dashboard/DonationEdit.jsx';
 
 
 const router = createBrowserRouter([
@@ -36,12 +39,16 @@ const router = createBrowserRouter([
         element:<Home/>
       },
       {
+        path:"search",
+        element: <Search/>
+      },
+      {
         path:"/pending-donation",
         element:<BloodDonationRequests/>
       },
       {
-            path:"/pending-details",
-            element: <BloodDonationDetails/>
+        path:"/pending-details/:id",
+        element: <BloodDonationDetails/>
       },
       { 
         path:"/donate",
@@ -93,18 +100,19 @@ const router = createBrowserRouter([
         path:'create-donation-request',
         element: <CreateDonation/>,
 
-        loader: async () => {
-              const districts = await fetch('/districts.json').then(res=>res.json());
-              const upozilas = await fetch('/upozila.json').then(res=>res.json());
-            
-            return { districts, upozilas };
-            }
-
       }
       ,
       {
         path:'my-donation-requests',
         element: <MyDonationRequests/>
+      },
+      {
+        path:"donation-request/:id",
+        element: <DonationDetails/>
+      }
+      ,{
+        path:"donation-edit/:id",
+        element: <DonationEdit/>
       }
       ,
       {

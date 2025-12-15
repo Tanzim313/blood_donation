@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import React from "react";
+import React, { useState } from "react";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { FaUserCircle } from "react-icons/fa";
 import UserActions from "./UserActions";
@@ -9,16 +9,26 @@ import UserActions from "./UserActions";
 export const AllUsers =()=>{
     
     const axios = useAxiosSecure();
+    const [statusFilter,setStatusFilter] = useState("all");
     
     const {data:user=[],isLoading,isError} = useQuery({
 
-        queryKey: ["users"],
+        queryKey: ["users",statusFilter],
         queryFn: async ()=>{
-            const res = await axios.get('/users');
+
+            const url = 
+            statusFilter === "all"
+            ?"/users"
+            :`/users?status=${statusFilter}`;
+            
+
+            const res = await axios.get(url);
 
             return res.data;
         }
     })
+
+
 
     if (isLoading) return <p className="text-center mt-12">Loading users...</p>;
     if (isError) return <p className="text-center mt-12">Failed to load users.....</p>;
@@ -84,9 +94,24 @@ export const AllUsers =()=>{
 
 
     return(
-        <div>
+        <div className="mt-4 flex flex-col justify-center items-center p-2">
+
+             <div className="w-[250px] mb-4">
+                <select className=" select select-bordered" 
+                value={statusFilter}
+                onChange={(e)=>setStatusFilter(e.target.value)}
+                >
+
+                    <option value="all">All</option>
+                    <option value="active">active</option>
+                    <option value="blocked">blocked</option>
+
+                </select>
+
+            </div>
+
             
-            <div className="overflow-auto">
+            <div className="overflow-auto w-full p-2 border-2">
 
                 <table className="table">
                        {/* head */}

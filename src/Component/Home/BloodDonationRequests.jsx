@@ -62,7 +62,7 @@ const BloodDonationRequests =()=>{
                         </div>
                         
                         <div className="text-right">
-                            <Link to="/pending-details"
+                            <Link to={`/pending-details/${pending._id}`}
                             className="bg-red-500 text-white px-5 py-2 rounded-md hover:bg-red-700 transition-colors"
                             >View  Details</Link>
                         </div>

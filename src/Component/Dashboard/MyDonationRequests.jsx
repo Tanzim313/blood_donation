@@ -39,10 +39,10 @@ const MyDonationRequests=()=>{
 
 
     return(
-        <div>
+        <div className="flex flex-col justify-center items-center mt-10">
 
-            <div>
-                <select className="select select-bordered" 
+            <div className="w-[250px]">
+                <select className=" select select-bordered" 
                 value={statusFilter}
                 onChange={(e)=>setStatusFilter(e.target.value)}
                 >
@@ -51,7 +51,7 @@ const MyDonationRequests=()=>{
                     <option value="pending">Pending</option>
                     <option value="inprogress">In Progress</option>
                     <option value="done">Done</option>
-                    <option value="canceled">Canceled</option>
+                    <option value="cancel">Cancel</option>
                 
                 </select>
 
@@ -59,7 +59,7 @@ const MyDonationRequests=()=>{
 
 
              {recentDonations.length > 0 &&(
-        <div className="p-4 flex flex-col items-center text-center">
+        <div className="p-4 flex flex-col items-center text-center w-full">
 
            <div className="p-4 w-full overflow-x-auto  border border-base-content/5 bg-base-100">
             <table className="table">
@@ -88,8 +88,8 @@ const MyDonationRequests=()=>{
                 <td>{donation.donationStatus}</td>
                 <td>{donation.donationStatus === "inprogress" ? (
                     <div>
-                        <p>Name:</p>
-                        <p>Email:</p>
+                        <p>Name:{donation.donorName}</p>
+                        <p>Email:{donation.donorEmail}</p>
                     </div>
                 ):(
                     <p>Not Assigned</p>

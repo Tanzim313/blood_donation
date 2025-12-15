@@ -3,11 +3,12 @@ import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AuthContext } from "../../Authprovider/AuthContext";
 import Donate from "./Donate";
+import { useParams } from "react-router";
 
 
 const BloodDonationDetails=()=>{
 
-
+const {id} = useParams();
 const axios = useAxiosSecure();
 const {user} = useContext(AuthContext);
 const queryClient = useQueryClient();
@@ -16,15 +17,15 @@ console.log("Logged in user:", user);
 
 
 
-    const {data:donations=[]} = useQuery({
-        queryKey:["pending-donations"],
+    const {data:pending=[]} = useQuery({
+        queryKey:["pending-donations",id],
         queryFn: async()=>{
-                const res = await axios.get("/pending-donations");
+                const res = await axios.get(`/pending-donations/${id}`);
                 return res.data
         },
     })
 
-    console.log("pending-data2:",donations);
+    console.log("pending-data2:",pending);
 
 
 
@@ -53,7 +54,7 @@ console.log("Logged in user:", user);
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
 
-                  {donations.map((pending)=>(
+                 
                     <div 
                     key={pending._id}
                     className="bg-white rounded-lg shadow p-5  hover:shadow-2xl transition-shadow duration-300 border-l-10 border-red-500"
@@ -101,8 +102,6 @@ console.log("Logged in user:", user);
                         </div>
 
                     </div>
-                  ))}
-
 
                 </div>
 
