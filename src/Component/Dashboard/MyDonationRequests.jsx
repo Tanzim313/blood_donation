@@ -1,10 +1,13 @@
 import React, { use, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AuthContext } from "../../Authprovider/AuthContext";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
+import { Link } from "react-router";
 
 const MyDonationRequests=()=>{
 
     const {user} = use(AuthContext);
+    const  axios = useAxiosSecure();
 
     const [statusFilter,setStatusFilter] = useState("all")
 
@@ -32,6 +35,25 @@ const MyDonationRequests=()=>{
         if (!user) return <p>Loading user...</p>;
         if (isLoading) return <p>Loading donation requests...</p>;
         if (isError) return <p>Failed to load donation requests.</p>;
+
+
+        const handleDelete= async(id)=>{
+            const confirm = window.confirm("Are You Sure?")
+                if(!confirm) return;
+
+                await axios.delete(`/donations-request/${id}`);
+
+            refetch();
+        };
+        
+        
+        const handleStatus = async(id,donationStatus)=>{
+        await axios.patch(`/donations-request/status/${id}`,{donationStatus});
+        console.log("status:",donationStatus)
+
+        refetch();
+        }
+
     
         
         const recentDonations = donations
@@ -97,15 +119,25 @@ const MyDonationRequests=()=>{
                 <td>
                     {donation.donationStatus === "inprogress" &&(
                         <div className="flex flex-col gap-2 mb-2">
-                            <button className="btn btn-success" >Done</button>
-                            <button className="btn btn-success" >Cancel</button>
+                            <button
+                            onClick={()=>handleStatus(donation._id,"done")} 
+                            className="btn btn-success" >Done</button>
+                            <button
+                            onClick={()=>handleStatus(donation._id,"cancel")}
+                            className="btn btn-success" >Cancel</button>
                         </div>
                     )}
-                    <div className="flex flex-col gap-2">
-                    <button className="btn btn-success">View</button>
-                    <button className="btn btn-success">Edit</button>
-                    <button className="btn btn-success">Delete</button>
-                    </div>
+                <div className="flex flex-col gap-2">
+                    <Link to={`/dashboard/donation-request/${donation._id}`} className="btn btn-success">View</Link>
+                    
+                    <Link to={`/dashboard/donation-edit/${donation._id}`} className="btn btn-success">Edit</Link>
+
+
+                    <button
+                    onClick={()=>handleDelete(donation._id)}
+                    className="btn btn-success">Delete</button>
+                
+                </div>
                 </td>
             </tr>
       ))}

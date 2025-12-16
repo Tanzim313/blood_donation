@@ -41,39 +41,39 @@ const VolunteerDashboard =()=>{
     });
 
     return(
-       <div>
-                   <div className="bg-red-600 text-white p-12  shadow mb-8 font-bold">
-                       <h1 className="text-4xl  text-center" >Welcome,{user.displayName}</h1>
-       
-                       <p className="text-center mt-2 text-lg">
-                               Manage users,donations and Statistics from your dashboard
-                       </p>
-                   </div>
-       
-       
-                   <div className="text-black grid grid-cols-1 sm:grid-cols-3 p-4 gap-6 ">
-                       <div className=" card bg-white shadow-lg p-6 rounded text-center flex flex-col justify-center items-center gap-2 ">
-                           <FaUsers className="text-blue-600 text-5xl mb-3" />
-                           <h2 className="font-bold">{users.length}</h2>
-                           <p className="font-bold">Total Donors</p>
-                       </div>
-       
-                       <div className="card bg-white shadow-lg p-6 rounded text-center flex flex-col justify-center items-center gap-2 ">
-                           <FaDonate className="text-yellow-600 text-5xl mb-3"/>
-                           <h2 className="font-bold">${funding.reduce((acc,f)=>acc+f.amount,0)}</h2>
-                           <p className="font-bold">Total Funding</p>
-                       </div>
-       
-                       <div className="card bg-white shadow-lg p-6 rounded text-center flex flex-col justify-center items-center gap-2 ">
-                           <MdBloodtype className="text-red-600 text-5xl mb-3"/>
-                           <h2 className="font-bold ">{donation.length}</h2>
-                           <p className="font-bold">Total Blood Requests</p>
-                       </div>
-       
-                   </div>
-       
-       
-               </div>
+    <div>
+                <div className="bg-red-600 text-white p-12  shadow mb-8 font-bold">
+                    <h1 className="text-4xl  text-center" >Welcome,{user.displayName}</h1>
+    
+                    <p className="text-center mt-2 text-lg">
+                            Manage users,donations and Statistics from your dashboard
+                    </p>
+                </div>
+    
+    
+                <div className="text-black grid grid-cols-1 sm:grid-cols-3 p-4 gap-6 ">
+                    <div className=" card bg-white shadow-lg p-6 rounded text-center flex flex-col justify-center items-center gap-2 ">
+                        <FaUsers className="text-blue-600 text-5xl mb-3" />
+                        <h2 className="font-bold">{users.length}</h2>
+                        <p className="font-bold">Total Donors</p>
+                    </div>
+    
+                    <div className="card bg-white shadow-lg p-6 rounded text-center flex flex-col justify-center items-center gap-2 ">
+                        <FaDonate className="text-yellow-600 text-5xl mb-3"/>
+                        <h2 className="font-bold">${funding.reduce((acc,f)=>acc+f.amount,0)}</h2>
+                        <p className="font-bold">Total Funding</p>
+                    </div>
+    
+                    <div className="card bg-white shadow-lg p-6 rounded text-center flex flex-col justify-center items-center gap-2 ">
+                        <MdBloodtype className="text-red-600 text-5xl mb-3"/>
+                        <h2 className="font-bold ">{donation.length}</h2>
+                        <p className="font-bold">Total Blood Requests</p>
+                    </div>
+    
+                </div>
+    
+    
+            </div>
     )
 
 }

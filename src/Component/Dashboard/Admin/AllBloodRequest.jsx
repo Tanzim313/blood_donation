@@ -1,42 +1,70 @@
-import React, { use, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AuthContext } from "../../../Authprovider/AuthContext";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import { Link } from "react-router";
 
 const AllBloodRequest=()=>{
 
     const {user} = use(AuthContext);
+    const  axios = useAxiosSecure();
 
     const [statusFilter,setStatusFilter] = useState("all")
+    const [page,setPage] = useState(1);
+    const limit = 5;
 
-    const {data:donations =[],isLoading,isError} = useQuery({
+    const {data,isLoading,isError} = useQuery({
     
-            queryKey:["donations",user,statusFilter],
-            queryFn: async ()=>{
-                    if(!user) return [];
-
-                    
-                    const params = new URLSearchParams();
-
-                    if(statusFilter !== "all"){
-                        params.append("status",statusFilter);
-                    }
-                    
-                    const res = await fetch(`http://localhost:3000/all-donation-request?${params.toString()}`);
-                    return res.json();
-            },
+            queryKey:["donations",user,statusFilter,page],
             enabled: !!user,
+            queryFn: async ()=>{
+                    const res = await axios.get(`/all-donation-request?status=${statusFilter}&page=${page}&limit=${limit}`);
+
+                    return res.data;
+            },
+            keepPreviousData:true,
         });
+
+        const donations = data?.result || [];
+        const total = data?.total||0;
+        const totalPages = Math.ceil(total/limit);
+
+        useEffect(()=>{
+            setPage(1);
+
+        },[statusFilter]);
+
+       
+
     
     
         if (!user) return <p>Loading user...</p>;
         if (isLoading) return <p>Loading donation requests...</p>;
         if (isError) return <p>Failed to load donation requests.</p>;
+
+
+        const handleDelete= async(id)=>{
+            const confirm = window.confirm("Are You Sure?")
+                if(!confirm) return;
+
+                await axios.delete(`/donations-request/${id}`);
+
+        };
+        
+        
+        const handleStatus = async(id,donationStatus)=>{
+        await axios.patch(`/donations-request/status/${id}`,{donationStatus});
+        console.log("status:",donationStatus)
+
+        }
     
         
-        const recentDonations = donations
+        const recentDonations = [...donations]
         .sort((a,b)=> new Date(b.donationDate)-new Date(a.donationDate));
 
 
+    
+    
     return(
         <div className="flex flex-col justify-center items-center mt-20">
 
@@ -50,7 +78,7 @@ const AllBloodRequest=()=>{
                     <option value="pending">Pending</option>
                     <option value="inprogress">In Progress</option>
                     <option value="done">Done</option>
-                    <option value="canceled">Canceled</option>
+                    <option value="cancel">Cancel</option>
                 
                 </select>
 
@@ -96,15 +124,25 @@ const AllBloodRequest=()=>{
                 <td>
                     {donation.donationStatus === "inprogress" &&(
                         <div className="flex flex-col gap-2 mb-2">
-                            <button className="btn btn-success" >Done</button>
-                            <button className="btn btn-success" >Cancel</button>
+                            <button
+                            onClick={()=>handleStatus(donation._id,"done")} 
+                            className="btn btn-success" >Done</button>
+                            <button
+                            onClick={()=>handleStatus(donation._id,"cancel")}
+                            className="btn btn-success" >Cancel</button>
                         </div>
                     )}
                     <div className="flex flex-col gap-2">
-                    <button className="btn btn-success">View</button>
-                    <button className="btn btn-success">Edit</button>
-                    <button className="btn btn-success">Delete</button>
-                    </div>
+                    <Link to={`/dashboard/donation-request/${donation._id}`} className="btn btn-success">View</Link>
+                    
+                    <Link to={`/dashboard/donation-edit/${donation._id}`} className="btn btn-success">Edit</Link>
+
+
+                    <button
+                    onClick={()=>handleDelete(donation._id)}
+                    className="btn btn-success">Delete</button>
+                
+                </div>
                 </td>
             </tr>
       ))}
@@ -114,8 +152,20 @@ const AllBloodRequest=()=>{
 
 
 </div>
-
 )}
+
+
+<div className="flex gap-2 mt-8">
+    {[...Array(totalPages).keys()].map((num)=>(
+        <button
+        key={num}
+        onClick={()=>setPage(num+1)}
+        className={`btn btn-sm ${page === num+1? "bg-red-600":"btn-outline"}`}
+        >
+            {num+1}
+        </button>
+    ))}
+</div>
 
 </div>
 )

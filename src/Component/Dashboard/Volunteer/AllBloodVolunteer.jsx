@@ -60,7 +60,7 @@ const AllBloodVolunteer=()=>{
 
 
     return(
-        <div className="flex flex-col justify-center items-center">
+        <div className="flex flex-col justify-center items-center ">
 
             <div className="mt-10 mb-10">
                 <select className="select select-bordered w-[280px]" 
@@ -174,18 +174,11 @@ const AllBloodVolunteer=()=>{
                             
                         )}
 
-                        {donation.donationStatus === "done"?(
+                        {(donation.donationStatus==="done"||donation.donationStatus==="cancel")&&(
                             <li>
-                               Done success fully
+                                {donation.donationStatus === "cancel"? "cancel successfully" :"done successfully"}
                             </li>
-                            ):(
-                            <li>
-
-                                cancel  success fully
-
-                            </li>
-                            )}
-
+                        )}
                         
                         </ul>
 
