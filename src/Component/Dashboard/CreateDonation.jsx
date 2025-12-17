@@ -25,7 +25,11 @@ const CreateDonation =()=>{
         enabled: !!user?.email,
 
         queryFn: async()=>{
-            const res = await axios.get(`/currentUsers?email=${user.email}`);
+            const res = await axios.get(`/currentUsers?email=${user.email}`,{
+                    headers:{
+                        authorization: `Bearer ${user?.accessToken}`
+                    }
+                });
 
             return res.data;
         }
@@ -57,7 +61,11 @@ const CreateDonation =()=>{
     
     const mutation = useMutation({
         mutationFn: async (donationData)=>{
-            const res = await axios.post("/donations-request",donationData);
+            const res = await axios.post("/donations-request",donationData,{
+                    headers:{
+                        authorization: `Bearer ${user?.accessToken}`
+                    }
+                });
             return res.data;
         },
 
@@ -118,10 +126,10 @@ const CreateDonation =()=>{
     return(
         
         
-        <div>
+        <div className="">
         {currentUser?.status === "active"?(
-            <div className="mt-10 flex flex-col justify-center items-center text-center">
-                <h2 className="mb-10 text-4xl font-bold">Create Donation Request</h2>
+            <div className="mt-10 flex flex-col justify-center items-center text-center mb-10">
+                <h2 className="mb-10 text-4xl font-bold text-red-600">Create Donation Request</h2>
 
                 <form onSubmit={handleSubmit}>
 
@@ -224,7 +232,7 @@ const CreateDonation =()=>{
                     placeholder="" />
 
 
-                    <button className="btn btn-neutral mt-4"> Donation Request </button>
+                    <button className="btn bg-red-600 text-white mt-4"> Donation Request </button>
                 </fieldset>
                 
                 </form>

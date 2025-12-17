@@ -31,9 +31,11 @@ const Funding =()=>{
             email: user?.email,
         };
 
-        const res = await axios.post(
-            "/payment-checkout-session",
-            paymentInfo
+        const res = await axios.post("/payment-checkout-session",paymentInfo,{
+                    headers:{
+                        authorization: `Bearer ${user?.accessToken}`
+                    }
+                }
         );
 
         console.log("stripe-session:",res.data)
@@ -47,7 +49,11 @@ const Funding =()=>{
     const{data:funding=[]}=useQuery({
         queryKey:["funding",user?.uid],
         queryFn:async()=>{
-            const res = await axios.get(`/funds-data/${user?.uid}`);
+            const res = await axios.get(`/funds-data/${user?.uid}`,{
+                    headers:{
+                        authorization: `Bearer ${user?.accessToken}`
+                    }
+                });
 
             return res.data;
         },
@@ -58,7 +64,7 @@ const Funding =()=>{
 
 
     return(
-        <div>
+        <div className="p-4">
 
             <div className="flex flex-row justify-center mt-10 mb-10">
 

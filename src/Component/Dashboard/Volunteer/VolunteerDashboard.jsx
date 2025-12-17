@@ -15,7 +15,11 @@ const VolunteerDashboard =()=>{
     const {data:users = []}=useQuery({
         queryKey: ["users"],
         queryFn: async()=>{
-            const res = await axios.get("/users");
+            const res = await axios.get("/users",{
+                    headers:{
+                        authorization: `Bearer ${user?.accessToken}`
+                    }
+                });
 
             return res.data;
         },
@@ -25,7 +29,11 @@ const VolunteerDashboard =()=>{
     const {data:funding = []}=useQuery({
         queryKey: ["funding"],
         queryFn: async()=>{
-            const res = await axios.get("/funding");
+            const res = await axios.get("/funding",{
+                    headers:{
+                        authorization: `Bearer ${user?.accessToken}`
+                    }
+                });
 
             return res.data;
         },
@@ -35,7 +43,11 @@ const VolunteerDashboard =()=>{
     const {data:donation = []}=useQuery({
         queryKey: ["donations"],
         queryFn: async()=>{
-            const res = await axios.get("/donations-request");
+            const res = await axios.get("/donations-request",{
+                    headers:{
+                        authorization: `Bearer ${user?.accessToken}`
+                    }
+                });
             return res.data;
         },
     });

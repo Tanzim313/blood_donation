@@ -1,17 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { FaUserCircle } from "react-icons/fa";
 import UserActions from "./UserActions";
+import { AuthContext } from "../../../Authprovider/AuthContext";
 
 
 export const AllUsers =()=>{
+
+    const {user} = use(AuthContext);
     
     const axios = useAxiosSecure();
     const [statusFilter,setStatusFilter] = useState("all");
     
-    const {data:user=[],isLoading,isError} = useQuery({
+    const {data:userData=[],isLoading,isError} = useQuery({
 
         queryKey: ["users",statusFilter],
         queryFn: async ()=>{
@@ -22,7 +25,11 @@ export const AllUsers =()=>{
             :`/users?status=${statusFilter}`;
             
 
-            const res = await axios.get(url);
+            const res = await axios.get(url,{
+                    headers:{
+                        authorization: `Bearer ${user?.accessToken}`
+                    }
+                });
 
             return res.data;
         }
@@ -33,14 +40,18 @@ export const AllUsers =()=>{
     if (isLoading) return <p className="text-center mt-12">Loading users...</p>;
     if (isError) return <p className="text-center mt-12">Failed to load users.....</p>;
 
-    console.log("users_admin:",user);
+    console.log("users_admin:",userData);
 
 
     //actions.....
 
     const handleBlock=async(id)=>{
     try{
-        await axios.patch(`/users/${id}/status`,{status:"blocked"});
+        await axios.patch(`/users/${id}/status`,{status:"blocked"},{
+                    headers:{
+                        authorization: `Bearer ${user?.accessToken}`
+                    }
+                });
         alert("user blocked successfully")
     }
     catch(err){
@@ -50,7 +61,11 @@ export const AllUsers =()=>{
 
     const handleUnblock = async(id)=>{
         try{
-            await axios.patch(`/users/${id}/status`,{status:"active"});
+            await axios.patch(`/users/${id}/status`,{status:"active"},{
+                    headers:{
+                        authorization: `Bearer ${user?.accessToken}`
+                    }
+                });
             alert("user Unblocked successfully")
 
         }catch(err){
@@ -61,7 +76,11 @@ export const AllUsers =()=>{
     const handleMakeDonor = async(id)=>{
         try{
             console.log("donor ID:", id);
-            await axios.patch(`/users/${id}/role`,{role:"donor"});
+            await axios.patch(`/users/${id}/role`,{role:"donor"},{
+                    headers:{
+                        authorization: `Bearer ${user?.accessToken}`
+                    }
+                });
             alert("user changed to donor successfully")
 
         }catch(err){
@@ -72,7 +91,12 @@ export const AllUsers =()=>{
     const handleMakeVolunteer = async(id)=>{
         try{
             console.log("Volunteer ID:", id);
-            await axios.patch(`/users/${id}/role`,{role:"volunteer"});
+            await axios.patch(`/users/${id}/role`,{role:"volunteer"},{
+                    headers:{
+                        authorization: `Bearer ${user?.accessToken}`
+                    }
+                });
+
             alert("user changed to volunteer successfully")
 
         }catch(err){
@@ -83,7 +107,11 @@ export const AllUsers =()=>{
     const handleMakeAdmin = async(id)=>{
         try{
             console.log("Volunteer ID:", id);
-            await axios.patch(`/users/${id}/role`,{role:"admin"});
+            await axios.patch(`/users/${id}/role`,{role:"admin"},{
+                    headers:{
+                        authorization: `Bearer ${user?.accessToken}`
+                    }
+                });
             alert("user changed to admin successfully")
 
         }catch(err){
@@ -129,7 +157,7 @@ export const AllUsers =()=>{
             </thead>
         
 
-        {user.map((u)=>(
+        {userData.map((u)=>(
             <div>
 
             </div>
@@ -138,7 +166,7 @@ export const AllUsers =()=>{
         <tbody>
 
 
-            {user.map((u)=>(
+            {userData.map((u)=>(
             <tr className="text-center">
                 <td>
             <div className="flex items-center gap-3">

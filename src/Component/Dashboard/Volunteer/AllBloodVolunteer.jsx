@@ -1,5 +1,5 @@
 import React, { use, useState } from "react";
-import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {  useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AuthContext } from "../../../Authprovider/AuthContext";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { BsThreeDotsVertical } from "react-icons/bs";
@@ -11,7 +11,7 @@ const AllBloodVolunteer=()=>{
     const {user} = use(AuthContext);
     const [statusFilter,setStatusFilter] = useState("all")
 
-    const {data:donations =[],isLoading,isError} = useQuery({
+    const {data:donations=[],isLoading,isError} = useQuery({
     
             queryKey:["donations",user,statusFilter],
             queryFn: async ()=>{
@@ -24,8 +24,16 @@ const AllBloodVolunteer=()=>{
                         params.append("status",statusFilter);
                     }
                     
-                    const res = await fetch(`http://localhost:3000/all-donation-request?${params.toString()}`);
-                    return res.json();
+                    const res = await axios.get(`/all-donation-request?${params.toString()}`,{
+                    headers:{
+                        authorization: `Bearer ${user?.accessToken}`
+                    }
+                });
+
+                    const data = await res.data;
+
+                    
+                    return Array.isArray(data.result)?data.result:[];
             },
             enabled: !!user,
         });
@@ -34,6 +42,10 @@ const AllBloodVolunteer=()=>{
             mutationFn: async({id,status})=>{
                 const res = await axios.patch(`donation-status/${id}`,{
                     status,
+                },{
+                    headers:{
+                        authorization: `Bearer ${user?.accessToken}`
+                    }
                 });
 
                 return res.data;
@@ -72,7 +84,7 @@ const AllBloodVolunteer=()=>{
                     <option value="pending">Pending</option>
                     <option value="inprogress">In Progress</option>
                     <option value="done">Done</option>
-                    <option value="canceled">Canceled</option>
+                    <option value="cancel">Cancel</option>
                 
                 </select>
 

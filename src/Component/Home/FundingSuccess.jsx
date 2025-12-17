@@ -1,7 +1,8 @@
-import React, { useEffect, useRef } from "react";
+import React, { use, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { AuthContext } from "../../Authprovider/AuthContext";
 
 
 
@@ -12,6 +13,7 @@ const FundingSuccess=()=>{
 
     const axios = useAxiosSecure();
     const queryClient = useQueryClient();
+    const {user} = use(AuthContext);
 
 
     const hasCalled = useRef(false);
@@ -19,7 +21,11 @@ const FundingSuccess=()=>{
     const fundingMutation = useMutation({
         mutationFn:async(session_id)=>{
 
-        const res = await axios.post("/funds",{session_id});
+        const res = await axios.post("/funds",{session_id},{
+                    headers:{
+                        authorization: `Bearer ${user?.accessToken}`
+                    }
+                });
         
         return res.data;
 

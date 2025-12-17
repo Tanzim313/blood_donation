@@ -26,6 +26,7 @@ import FundingSuccess from './Component/Home/FundingSuccess.jsx';
 import Search from './Component/Home/Search.jsx';
 import DonationDetails from './Component/Dashboard/DonationDetails.jsx';
 import DonationEdit from './Component/Dashboard/DonationEdit.jsx';
+import PrivateRoutes from './Routes/PrivateRoutes.jsx';
 
 
 const router = createBrowserRouter([
@@ -48,7 +49,11 @@ const router = createBrowserRouter([
       },
       {
         path:"/pending-details/:id",
-        element: <BloodDonationDetails/>
+        element: 
+        <PrivateRoutes>
+                <BloodDonationDetails/>
+        </PrivateRoutes>
+        
       },
       { 
         path:"/donate",
@@ -72,68 +77,113 @@ const router = createBrowserRouter([
       },
       {
         path:'/funding',
-        element: <Funding/>
+        element: 
+        <PrivateRoutes>
+                <Funding/>
+        </PrivateRoutes>
+        
       }
       ,{
         path:"/funding-success",
-        element: <FundingSuccess/>
+        element: 
+        <PrivateRoutes>
+                <FundingSuccess/>
+        </PrivateRoutes>
+        
       }
     ]
   },
   {
             
     path:'dashboard',
-    element: <Dashboard/>,
+    element: 
+    <PrivateRoutes>
+          <Dashboard/>
+    </PrivateRoutes>,
 
     children:[
 
       {
         index:true,
-        element: <DashboardHome/>
+        element:
+        <PrivateRoutes>
+          <DashboardHome/>
+        </PrivateRoutes>,
+        
       },
       
       {
         path:'profile',
-        element: <Profile/>
+        element: 
+        <PrivateRoutes>
+              <Profile/>
+        </PrivateRoutes>,
       },
       {
         path:'create-donation-request',
-        element: <CreateDonation/>,
+        element: 
+        <PrivateRoutes>
+              <CreateDonation/>,
+        </PrivateRoutes>,
+       
 
       }
       ,
       {
         path:'my-donation-requests',
-        element: <MyDonationRequests/>
+        element: 
+        <PrivateRoutes>
+              <MyDonationRequests/>
+        </PrivateRoutes>,
       },
       {
         path:"donation-request/:id",
-        element: <DonationDetails/>
+        element:
+        <PrivateRoutes>
+             <DonationDetails/>
+        </PrivateRoutes>, 
+     
       }
       ,{
         path:"donation-edit/:id",
-        element: <DonationEdit/>
+        element: 
+        <PrivateRoutes>
+              <DonationEdit/>
+        </PrivateRoutes>, 
+      
       }
       ,
       {
         path:'all-users',
-        element: <AllUsers/>
+        element:
+        <PrivateRoutes>
+              <AllUsers/>
+        </PrivateRoutes>,  
+        
       }
       ,
       {
         path:'all-donations',
-        element: <AllBloodRequest/>
+        element: 
+        <PrivateRoutes>
+            <AllBloodRequest/>
+        </PrivateRoutes>, 
+        
       }
       ,
       {
         path:'all-donations-volunteer',
-        element: <AllBloodVolunteer/>
+        element: 
+        <PrivateRoutes>
+            <AllBloodVolunteer/>
+        </PrivateRoutes>, 
+      
       }
       
 
     ]
 
-  }
+  }   
 ]);
 
 

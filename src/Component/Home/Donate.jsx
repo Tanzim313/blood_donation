@@ -1,6 +1,7 @@
 import React from "react";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import toast, { Toaster } from "react-hot-toast";
 
 
 
@@ -18,18 +19,25 @@ const Donate = ({isOpen,setIsOpen,selectedDonation,user})=>{
                 donationStatus:"inprogress",
                 donorName:user.displayName,
                 donorEmail:user.email,
-            });
+            },{
+                    headers:{
+                        authorization: `Bearer ${user?.accessToken}`
+                    }
+                }
+        );
             return res.data;
         },
         onSuccess:()=>{
             queryClient.invalidateQueries(["pending-donations"]);
             setIsOpen(false);
 
-            alert("Donation confirmed successfully!");
+            
+            toast.success('Successfully Donation confirmed!')
         },
         onError:(err)=>{
             console.error("Error confirming donation:",err);
-            alert("Failed to confirm donation!");
+            
+            toast.success('Failed to confirm donation!')
         },
     });
 
@@ -37,6 +45,12 @@ const Donate = ({isOpen,setIsOpen,selectedDonation,user})=>{
 
     return(
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+
+            <Toaster
+                position="top-center"
+                reverseOrder={false}
+            />
+
             <div className="text-black bg-white rounded-lg p-6 w-96 shadow-lg">
                 <h3 className="text-xl font-bold mb-4">
                     Confirm Donation

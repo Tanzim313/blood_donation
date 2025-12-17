@@ -18,7 +18,13 @@ const DonationDetails=()=>{
     const {data:donation,isLoading}=useQuery({
         queryKey:["donation-details",id],
         queryFn:async()=>{
-            const res = await axios.get(`/donations-request/${id}`);
+            
+            const res = await axios.get(`/donations-request/${id}`,{
+                    headers:{
+                        authorization: `Bearer ${user?.accessToken}`
+                    }
+                });
+
             return res.data;
         }
     })
@@ -38,23 +44,24 @@ const DonationDetails=()=>{
 
     return(
 
-        <div className="max-w-3xl mx-auto mt-10">
-            <div className="bg-white rounded-lg shadow p-6 border-l-4 border-red-500">
+        <div className="max-w-3xl mx-auto mt-20 p-10 mb-20">
+            <div className="bg-white rounded-lg shadow p-6 border-b-5 border-t-5 border-red-500">
                 <h2 className="text-2xl font-bold text-red-600 mb-4">Donation Request Details</h2>
 
 
-                <div className="space-y-2 text-gray-700">
-                    <p>Recipient Name:{donation.recipientName}</p>
-                    <p>Blood Group:{donation.bloodGroup}</p>
-                    <p></p>
-                    <p></p>
-                    <p></p>
-                    <p></p>
-                    <p></p>
-                    <p></p>
-                    <p></p>
-                    <p></p>
-                    <p></p>
+                <div className="space-y-2 text-gray-600 font-semibold p-4">
+                    <p>RecipientName:{donation.recipientName}</p>
+                    <p>Blood Group:<span className="text-red-600 font-bold">{donation.bloodGroup}</span></p>
+                    <p>requesterName:{donation.requesterName}</p>
+                    <p>requesterEmail:{donation.requesterEmail}</p>
+                    <p>recipientDistrict:{donation.recipientDistrict}</p>
+                    <p>recipientUpazila:{donation.recipientUpazila}</p>
+                    <p>hospitalName:{donation.hospitalName}</p>
+                    <p>fullAddress:{donation.fullAddress}</p>
+                    <p>donationData:{donation.donationData}</p>
+                    <p>donationTime:{donation.donationTime}</p>
+                    <p>requestMessage:{donation.requestMessage}</p>
+                    <p>donationStatus:{donation.donationStatus}</p>
 
 
                       <div className="text-right">

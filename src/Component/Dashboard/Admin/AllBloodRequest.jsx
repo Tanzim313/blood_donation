@@ -18,7 +18,11 @@ const AllBloodRequest=()=>{
             queryKey:["donations",user,statusFilter,page],
             enabled: !!user,
             queryFn: async ()=>{
-                    const res = await axios.get(`/all-donation-request?status=${statusFilter}&page=${page}&limit=${limit}`);
+                    const res = await axios.get(`/all-donation-request?status=${statusFilter}&page=${page}&limit=${limit}`,{
+                    headers:{
+                        authorization: `Bearer ${user?.accessToken}`
+                    }
+                });
 
                     return res.data;
             },
@@ -47,13 +51,22 @@ const AllBloodRequest=()=>{
             const confirm = window.confirm("Are You Sure?")
                 if(!confirm) return;
 
-                await axios.delete(`/donations-request/${id}`);
+                await axios.delete(`/donations-request/${id}`,{
+                    headers:{
+                        authorization: `Bearer ${user?.accessToken}`
+                    }
+                });
 
         };
         
         
         const handleStatus = async(id,donationStatus)=>{
-        await axios.patch(`/donations-request/status/${id}`,{donationStatus});
+        await axios.patch(`/donations-request/status/${id}`,{donationStatus},{
+                    headers:{
+                        authorization: `Bearer ${user?.accessToken}`
+                    }
+                });
+                
         console.log("status:",donationStatus)
 
         }
@@ -126,21 +139,21 @@ const AllBloodRequest=()=>{
                         <div className="flex flex-col gap-2 mb-2">
                             <button
                             onClick={()=>handleStatus(donation._id,"done")} 
-                            className="btn btn-success" >Done</button>
+                            className="btn bg-red-600" >Done</button>
                             <button
                             onClick={()=>handleStatus(donation._id,"cancel")}
-                            className="btn btn-success" >Cancel</button>
+                            className="btn bg-red-600" >Cancel</button>
                         </div>
                     )}
                     <div className="flex flex-col gap-2">
-                    <Link to={`/dashboard/donation-request/${donation._id}`} className="btn btn-success">View</Link>
+                    <Link to={`/dashboard/donation-request/${donation._id}`} className="btn bg-red-600">View</Link>
                     
-                    <Link to={`/dashboard/donation-edit/${donation._id}`} className="btn btn-success">Edit</Link>
+                    <Link to={`/dashboard/donation-edit/${donation._id}`} className="btn bg-red-600">Edit</Link>
 
 
                     <button
                     onClick={()=>handleDelete(donation._id)}
-                    className="btn btn-success">Delete</button>
+                    className="btn bg-red-600">Delete</button>
                 
                 </div>
                 </td>

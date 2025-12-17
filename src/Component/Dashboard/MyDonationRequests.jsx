@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { AuthContext } from "../../Authprovider/AuthContext";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { Link } from "react-router";
+import toast, { Toaster } from "react-hot-toast";
 
 const MyDonationRequests=()=>{
 
@@ -14,7 +15,9 @@ const MyDonationRequests=()=>{
     const {data:donations =[],isLoading,isError} = useQuery({
     
             queryKey:["donations",user?.email,statusFilter],
+            enabled: !!user,
             queryFn: async ()=>{
+
                     if(!user) return [];
 
                     
@@ -25,10 +28,15 @@ const MyDonationRequests=()=>{
                         params.append("status",statusFilter);
                     }
                     
-                    const res = await fetch(`http://localhost:3000/donations-request?${params.toString()}`);
-                    return res.json();
+                    const res = await axios.get(`/donations-request?${params.toString()}`,{
+                    headers:{
+                        authorization: `Bearer ${user?.accessToken}`
+                    }
+                });
+
+                    return res.data;
             },
-            enabled: !!user,
+    
         });
     
     
@@ -41,15 +49,28 @@ const MyDonationRequests=()=>{
             const confirm = window.confirm("Are You Sure?")
                 if(!confirm) return;
 
-                await axios.delete(`/donations-request/${id}`);
+                await axios.delete(`/donations-request/${id}`,{
+                    headers:{
+                        authorization: `Bearer ${user?.accessToken}`
+                    }
+                });
+            
+            toast.success('Successfully toasted!')
 
             refetch();
         };
         
         
         const handleStatus = async(id,donationStatus)=>{
-        await axios.patch(`/donations-request/status/${id}`,{donationStatus});
+        await axios.patch(`/donations-request/status/${id}`,{donationStatus},{
+                    headers:{
+                        authorization: `Bearer ${user?.accessToken}`
+                    }
+                });
+                
         console.log("status:",donationStatus)
+        
+        toast.success('Successfully toasted!')
 
         refetch();
         }
@@ -62,6 +83,10 @@ const MyDonationRequests=()=>{
 
     return(
         <div className="flex flex-col justify-center items-center mt-10">
+            <Toaster
+                position="top-center"
+                reverseOrder={false}
+            />
 
             <div className="w-[250px]">
                 <select className=" select select-bordered" 
@@ -121,21 +146,21 @@ const MyDonationRequests=()=>{
                         <div className="flex flex-col gap-2 mb-2">
                             <button
                             onClick={()=>handleStatus(donation._id,"done")} 
-                            className="btn btn-success" >Done</button>
+                            className="btn bg-red-600" >Done</button>
                             <button
                             onClick={()=>handleStatus(donation._id,"cancel")}
-                            className="btn btn-success" >Cancel</button>
+                            className="btn bg-red-600" >Cancel</button>
                         </div>
                     )}
                 <div className="flex flex-col gap-2">
-                    <Link to={`/dashboard/donation-request/${donation._id}`} className="btn btn-success">View</Link>
+                    <Link to={`/dashboard/donation-request/${donation._id}`} className="btn bg-red-600">View</Link>
                     
-                    <Link to={`/dashboard/donation-edit/${donation._id}`} className="btn btn-success">Edit</Link>
+                    <Link to={`/dashboard/donation-edit/${donation._id}`} className="btn bg-red-600">Edit</Link>
 
 
                     <button
                     onClick={()=>handleDelete(donation._id)}
-                    className="btn btn-success">Delete</button>
+                    className="btn bg-red-600">Delete</button>
                 
                 </div>
                 </td>

@@ -1,9 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { use, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import toast, { Toaster } from 'react-hot-toast';
+import { AuthContext } from '../../Authprovider/AuthContext';
 
 const DonationEdit=()=> {
+
+    const {user} = use(AuthContext)
 
     const {id}=useParams();
     const axios = useAxiosSecure();
@@ -57,7 +61,11 @@ const DonationEdit=()=> {
     const {data:donation,isLoading} = useQuery({
         queryKey:["donation-details",id],
         queryFn: async()=>{
-            const res = await axios.get(`/donations-request/${id}`);
+            const res = await axios.get(`/donations-request/${id}`,{
+                    headers:{
+                        authorization: `Bearer ${user?.accessToken}`
+                    }
+                });
             //setDonationData(res.data);
         return res.data;
         }
@@ -94,18 +102,28 @@ const DonationEdit=()=> {
 
     const updateDonationMutation = useMutation({
         mutationFn:async(updatedData)=>{
-            const res = await axios.patch(`/donations-request/edit/${id}`,updatedData);
+            const res = await axios.patch(`/donations-request/edit/${id}`,updatedData,{
+                    headers:{
+                        authorization: `Bearer ${user?.accessToken}`
+                    }
+                });
+
             return res.data;
         },
         onSuccess:()=>{
             queryClient.invalidateQueries(["donation-details",id]);
-            alert("Donation updated Successfully!");
+            
+            toast.success('Successfully Donation Updated!')
+            
             navigate("/dashboard/my-donation-requests");
         },
         onError:()=>{
-            alert("Failed to update donation");
+            toast.success('Successfully Failed!')
         }
     });
+
+
+
 
     const handleUpdate=(e)=>{
         e.preventDefault();
@@ -117,12 +135,17 @@ const DonationEdit=()=> {
 
 
 
-  return (
-    <div>
+return (
+    <div className=''>
 
-        <form onSubmit={handleUpdate}>
+        <Toaster
+            position="top-center"
+            reverseOrder={false}
+        />
 
-                <fieldset className="fieldset bg-base-200 border-base-500 rounded-box min-w-xs border p-4">
+        <form className='flex flex-col justify-center items-center p-10 ' onSubmit={handleUpdate}>
+
+                <fieldset className="fieldset bg-base-200 border-base-500 rounded-box min-w-xs border p-4 ">
                     
                     <label className="label">Requester Name</label>
                     <input 
@@ -268,7 +291,8 @@ const DonationEdit=()=> {
                     placeholder="" />
 
 
-                    <button className="btn btn-neutral mt-4"> updated Request </button>
+                    <button className="btn bg-red-600 text-white mt-4 font-bold"> Updated Request </button>
+                
                 </fieldset>
                 
                 </form>

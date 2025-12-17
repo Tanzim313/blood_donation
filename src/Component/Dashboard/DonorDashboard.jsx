@@ -14,13 +14,17 @@ const DonorDashboard =()=>{
 
 
 
-    const {data:donations =[],isLoading,isError} = useQuery({
+    const {data:donations =[],isLoading,isError,refetch} = useQuery({
 
         queryKey:["donations",user?.email],
         queryFn: async ()=>{
-                if(!user) return [];
-                const res = await fetch(`http://localhost:3000/donations-request?email=${user.email}`);
-                return res.json();
+                ///if(!user) return [];
+                const res = await axios.get(`/donations-request?email=${user.email}`,{
+                    headers:{
+                        authorization: `Bearer ${user?.accessToken}`
+                    }
+                });
+                return res.data;
         },
         enabled: !!user,
     });
@@ -41,7 +45,11 @@ const DonorDashboard =()=>{
         const confirm = window.confirm("Are You Sure?")
         if(!confirm) return;
 
-        await axios.delete(`/donations-request/${id}`);
+        await axios.delete(`/donations-request/${id}`,{
+                    headers:{
+                        authorization: `Bearer ${user?.accessToken}`
+                    }
+                });
 
         refetch();
 
@@ -50,7 +58,11 @@ const DonorDashboard =()=>{
 
 
     const handleStatus = async(id,donationStatus)=>{
-        await axios.patch(`/donations-request/status/${id}`,{donationStatus});
+        await axios.patch(`/donations-request/status/${id}`,{donationStatus},{
+                    headers:{
+                        authorization: `Bearer ${user?.accessToken}`
+                    }
+                });
         console.log("status:",donationStatus)
 
         refetch();
@@ -68,8 +80,8 @@ const DonorDashboard =()=>{
             {recentDonations.length > 0 &&(
         <div className="p-4 flex flex-col items-center text-center">
 
-           <div className="p-4 w-full overflow-x-auto  border border-base-content/5 bg-base-100">
-            <table className="table">
+           <div className="p-4 w-full overflow-x-auto  border border-base-content/5 bg-base-100 font-bold">
+            <table className="table ">
     {/*head*/}
     <thead>
       <tr>
@@ -106,21 +118,21 @@ const DonorDashboard =()=>{
                         <div className="flex flex-col gap-2 mb-2">
                             <button
                             onClick={()=>handleStatus(donation._id,"done")} 
-                            className="btn btn-success" >Done</button>
+                            className="btn bg-red-600 text-white font-bold" >Done</button>
                             <button
                             onClick={()=>handleStatus(donation._id,"cancel")}
-                            className="btn btn-success" >Cancel</button>
+                            className="btn bg-red-600 text-white font-bold" >Cancel</button>
                         </div>
                     )}
                     <div className="flex flex-col gap-2">
-                    <Link to={`/dashboard/donation-request/${donation._id}`} className="btn btn-success">View</Link>
+                    <Link to={`/dashboard/donation-request/${donation._id}`} className="btn bg-red-600 text-white font-bold">View</Link>
                     
-                    <Link to={`/dashboard/donation-edit/${donation._id}`} className="btn btn-success">Edit</Link>
+                    <Link to={`/dashboard/donation-edit/${donation._id}`} className="btn bg-red-600 text-white font-bold">Edit</Link>
 
 
                     <button
                     onClick={()=>handleDelete(donation._id)}
-                    className="btn btn-success">Delete</button>
+                    className="btn bg-red-600 text-white font-bold">Delete</button>
                     </div>
                 </td>
             </tr>
@@ -131,7 +143,7 @@ const DonorDashboard =()=>{
 
 <div className="">
     <Link to="/dashboard/my-donation-requests">
-        <button className=" btn btn-success min-w-[300px] h-[50px] mt-10 mb-10 " >View All My Requests</button>
+        <button className=" btn bg-red-600 min-w-[300px] h-[50px] mt-10 mb-10  text-white" >View All My Requests</button>
     </Link>
   </div>
 

@@ -13,6 +13,10 @@ const axios = useAxiosSecure();
 const {user} = useContext(AuthContext);
 const queryClient = useQueryClient();
 
+
+///console.log('token',user.accessToken)
+
+
 console.log("Logged in user:", user);
 
 
@@ -20,10 +24,15 @@ console.log("Logged in user:", user);
     const {data:pending=[]} = useQuery({
         queryKey:["pending-donations",id],
         queryFn: async()=>{
-                const res = await axios.get(`/pending-donations/${id}`);
+                const res = await axios.get(`/pending-donations/${id}`,{
+                    headers:{
+                        authorization: `Bearer ${user?.accessToken}`
+                    }
+                });
                 return res.data
         },
     })
+
 
     console.log("pending-data2:",pending);
 
@@ -51,7 +60,7 @@ console.log("Logged in user:", user);
             <div>
             
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="mt-10 mb-10 p-4 shadow">
 
 
                  

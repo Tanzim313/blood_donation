@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { use, useEffect } from 'react';
+import React, { use, useContext, useEffect } from 'react';
 import { AuthContext } from '../Authprovider/AuthContext';
 
 
@@ -12,13 +12,6 @@ const useAxiosSecure = ()=>{
 
     const {user} = use(AuthContext);
 
-    useEffect(()=>{
-        //intercept request
-        axiosSecure.interceptors.request.use(config=>{
-            config.headers.Authorization = `Bearer ${user?.accessToken}`
-            return config
-        })
-    },[user])
 
     return axiosSecure;
 
