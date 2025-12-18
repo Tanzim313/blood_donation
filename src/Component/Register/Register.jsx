@@ -68,6 +68,7 @@ const Register =()=>{
     formData.append("image", file);
 
     ///const API_KEY="e3660bf232ca76595da4fe9d3b4acb79";
+    
     const API_KEY = import.meta.env.VITE_API_KEY;
 
     const res = await fetch(
