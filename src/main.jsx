@@ -27,6 +27,10 @@ import Search from './Component/Home/Search.jsx';
 import DonationDetails from './Component/Dashboard/DonationDetails.jsx';
 import DonationEdit from './Component/Dashboard/DonationEdit.jsx';
 import PrivateRoutes from './Routes/PrivateRoutes.jsx';
+import ForgotPassword from './Component/ForgotPassword.jsx';
+import Error from './Error/Error.jsx';
+import AdminRoutes from './Routes/AdminRoutes.jsx';
+import VolunteerRoutes from './Routes/VolunteerRoutes.jsx';
 
 
 const router = createBrowserRouter([
@@ -90,7 +94,14 @@ const router = createBrowserRouter([
                 <FundingSuccess/>
         </PrivateRoutes>
         
-      }
+      },
+      {
+        path:"forgot-password",
+        element: <ForgotPassword/>
+      },{
+      path:"*",
+      element: <Error/>
+    }
     ]
   },
   {
@@ -157,7 +168,9 @@ const router = createBrowserRouter([
         path:'all-users',
         element:
         <PrivateRoutes>
-              <AllUsers/>
+          <AdminRoutes>
+                    <AllUsers/>
+          </AdminRoutes>      
         </PrivateRoutes>,  
         
       }
@@ -166,7 +179,9 @@ const router = createBrowserRouter([
         path:'all-donations',
         element: 
         <PrivateRoutes>
-            <AllBloodRequest/>
+          <AdminRoutes>
+                <AllBloodRequest/>
+          </AdminRoutes>
         </PrivateRoutes>, 
         
       }
@@ -175,7 +190,9 @@ const router = createBrowserRouter([
         path:'all-donations-volunteer',
         element: 
         <PrivateRoutes>
-            <AllBloodVolunteer/>
+          <VolunteerRoutes>
+              <AllBloodVolunteer/>
+          </VolunteerRoutes>
         </PrivateRoutes>, 
       
       }

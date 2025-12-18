@@ -1,4 +1,4 @@
-import React, { use, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AuthContext } from "../../Authprovider/AuthContext";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
@@ -11,10 +11,16 @@ const MyDonationRequests=()=>{
     const  axios = useAxiosSecure();
 
     const [statusFilter,setStatusFilter] = useState("all")
+    const [page,setPage] = useState(1);
+    const limit = 5;
 
-    const {data:donations =[],isLoading,isError} = useQuery({
+
+    const [deleteId,setDeleteId]= useState(null)
     
-            queryKey:["donations",user?.email,statusFilter],
+
+    const {data,isLoading,isError,refetch} = useQuery({
+    
+            queryKey:["donations",user?.email,statusFilter,page],
             enabled: !!user,
             queryFn: async ()=>{
 
@@ -27,8 +33,8 @@ const MyDonationRequests=()=>{
                     if(statusFilter !== "all"){
                         params.append("status",statusFilter);
                     }
-                    
-                    const res = await axios.get(`/donations-request?${params.toString()}`,{
+                   
+                    const res = await axios.get(`/donations-request?${params.toString()}&page=${page}&limit=${limit}`,{
                     headers:{
                         authorization: `Bearer ${user?.accessToken}`
                     }
@@ -36,8 +42,20 @@ const MyDonationRequests=()=>{
 
                     return res.data;
             },
+
+            keepPreviousData:true,
     
         });
+
+
+        const donations = data?.result;
+        const total = data?.total||0;
+        const totalPages = Math.ceil(total/limit);
+        
+            useEffect(()=>{
+                    setPage(1);
+        
+                },[statusFilter]);
     
     
         if (!user) return <p>Loading user...</p>;
@@ -45,18 +63,21 @@ const MyDonationRequests=()=>{
         if (isError) return <p>Failed to load donation requests.</p>;
 
 
-        const handleDelete= async(id)=>{
-            const confirm = window.confirm("Are You Sure?")
-                if(!confirm) return;
+        const handleDelete= async()=>{
+            
+            if(!deleteId) return;
 
-                await axios.delete(`/donations-request/${id}`,{
+           
+                await axios.delete(`/donations-request/${deleteId}`,{
                     headers:{
                         authorization: `Bearer ${user?.accessToken}`
                     }
                 });
+
             
             toast.success('Successfully toasted!')
 
+            setDeleteId(null);
             refetch();
         };
         
@@ -110,7 +131,7 @@ const MyDonationRequests=()=>{
 
            <div className="p-4 w-full overflow-x-auto  border border-base-content/5 bg-base-100">
             <table className="table">
-    {/*head*/}
+   
     <thead>
       <tr>
         <th>Recipient Name</th>
@@ -124,7 +145,7 @@ const MyDonationRequests=()=>{
       </tr>
     </thead>
     <tbody>
-      {/* row 1 */}
+     
       {recentDonations.map((donation)=>(
             <tr>
                 <td>{donation.recipientName}</td>
@@ -159,7 +180,7 @@ const MyDonationRequests=()=>{
 
 
                     <button
-                    onClick={()=>handleDelete(donation._id)}
+                    onClick={()=>setDeleteId(donation._id)}
                     className="btn bg-red-600">Delete</button>
                 
                 </div>
@@ -174,6 +195,45 @@ const MyDonationRequests=()=>{
 </div>
 
 )}
+
+<div className="flex gap-2 mt-8">
+    {[...Array(totalPages).keys()].map((num)=>(
+        <button
+        key={num}
+        onClick={()=>setPage(num+1)}
+        className={`btn btn-sm ${page === num+1? "bg-red-600":"btn-outline"}`}
+        >
+            {num+1}
+        </button>
+    ))}
+</div>
+
+{deleteId && (
+  <div open className="modal modal-open inset-0 shadow">
+    <div className="modal-box border-4 border-red-600 p-4 min-w-[300px]">
+      <h3 className="font-bold text-xl text-center">Delete Donation Request</h3>
+      <p className="p-4">
+        Are You Sure,You wanted to Delete this Blood Request?
+      </p>
+      <div className="modal-action flex flex-row justify-center items-center">
+        <button
+          className="btn"
+          onClick={() => setDeleteId(null)}
+        >
+          Cancel
+        </button>
+        <button
+          className="btn bg-red-600 text-white"
+          onClick={handleDelete}
+        >
+          Confirm Delete
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+
 
 </div>
 )

@@ -1,4 +1,4 @@
-import React, { use, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import {  useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AuthContext } from "../../../Authprovider/AuthContext";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
@@ -11,9 +11,13 @@ const AllBloodVolunteer=()=>{
     const {user} = use(AuthContext);
     const [statusFilter,setStatusFilter] = useState("all")
 
-    const {data:donations=[],isLoading,isError} = useQuery({
+    const [page,setPage] = useState(1);
+    const limit = 5;
+
+    const {data,isLoading,isError} = useQuery({
     
-            queryKey:["donations",user,statusFilter],
+            queryKey:["donations",user,statusFilter,page],
+            enabled: !!user,
             queryFn: async ()=>{
                     if(!user) return [];
 
@@ -24,19 +28,29 @@ const AllBloodVolunteer=()=>{
                         params.append("status",statusFilter);
                     }
                     
-                    const res = await axios.get(`/all-donation-request?${params.toString()}`,{
+                    const res = await axios.get(`/all-donation-request?${params.toString()}&page=${page}&limit=${limit}`,{
                     headers:{
                         authorization: `Bearer ${user?.accessToken}`
                     }
                 });
 
-                    const data = await res.data;
-
-                    
-                    return Array.isArray(data.result)?data.result:[];
+                return res.data;
             },
-            enabled: !!user,
+            keepPreviousData:true,
         });
+
+
+                
+                const donations = data?.result || [];
+                const total = data?.total||0;
+                const totalPages = Math.ceil(total/limit);
+        
+                useEffect(()=>{
+                    setPage(1);
+        
+                },[statusFilter]);
+
+    
 
         const statusMutation = useMutation({
             mutationFn: async({id,status})=>{
@@ -58,6 +72,7 @@ const AllBloodVolunteer=()=>{
         const handleStatusUpdate = (id,status)=>{
             statusMutation.mutate({id,status});
         };
+
     
         
         
@@ -65,8 +80,9 @@ const AllBloodVolunteer=()=>{
         if (isLoading) return <p>Loading donation requests...</p>;
         if (isError) return <p>Failed to load donation requests.</p>;
     
-        
-        const recentDonations = donations
+       
+
+        const recentDonations = [...donations]
         .sort((a,b)=> new Date(b.donationDate)-new Date(a.donationDate));
 
 
@@ -207,6 +223,18 @@ const AllBloodVolunteer=()=>{
 </div>
 
 )}
+
+<div className="flex gap-2 mt-8">
+    {[...Array(totalPages).keys()].map((num)=>(
+        <button
+        key={num}
+        onClick={()=>setPage(num+1)}
+        className={`btn btn-sm ${page === num+1? "bg-red-600":"btn-outline"}`}
+        >
+            {num+1}
+        </button>
+    ))}
+</div>
 
 </div>
 ) 

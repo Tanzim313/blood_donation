@@ -4,6 +4,7 @@ import { AuthContext } from "../../Authprovider/AuthContext";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useLoaderData } from "react-router";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import toast, { Toaster } from "react-hot-toast";
 
 
 const CreateDonation =()=>{
@@ -70,7 +71,7 @@ const CreateDonation =()=>{
         },
 
         onSuccess: ()=>{
-                alert("Donation Request Created Successfully!");
+                toast.success('Successfully Donation Request Create!!!!')
         },
     });
 
@@ -127,6 +128,10 @@ const CreateDonation =()=>{
         
         
         <div className="">
+            <Toaster
+                position="top-center"
+                reverseOrder={false}
+            />
         {currentUser?.status === "active"?(
             <div className="mt-10 flex flex-col justify-center items-center text-center mb-10">
                 <h2 className="mb-10 text-4xl font-bold text-red-600">Create Donation Request</h2>

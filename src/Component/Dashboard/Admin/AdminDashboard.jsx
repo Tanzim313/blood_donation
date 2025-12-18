@@ -38,7 +38,7 @@ const AdminDashboard =()=>{
     });
 
 
-    const {data:donation = []}=useQuery({
+    const {data}=useQuery({
         queryKey: ["donations"],
         queryFn: async()=>{
             const res = await axios.get("/donations-request",{
@@ -49,6 +49,8 @@ const AdminDashboard =()=>{
             return res.data;
         },
     });
+
+    const totalDonation = data?.total;
 
 
 
@@ -78,7 +80,7 @@ const AdminDashboard =()=>{
 
                 <div className="card bg-white shadow-lg p-6 rounded text-center flex flex-col justify-center items-center gap-2 ">
                     <MdBloodtype className="text-red-600 text-5xl mb-3"/>
-                    <h2 className="font-bold ">{donation.length}</h2>
+                    <h2 className="font-bold ">{totalDonation}</h2>
                     <p className="font-bold">Total Blood Requests</p>
                 </div>
 

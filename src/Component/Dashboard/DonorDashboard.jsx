@@ -1,8 +1,9 @@
-import React, { use } from "react";
+import React, { use, useState } from "react";
 import { AuthContext } from "../../Authprovider/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "react-router";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import toast, { Toaster } from "react-hot-toast";
 
 
 const DonorDashboard =()=>{
@@ -11,10 +12,12 @@ const DonorDashboard =()=>{
 
     const axios = useAxiosSecure();
 
+    const [deleteId,setDeleteId]= useState(null)
 
 
 
-    const {data:donations =[],isLoading,isError,refetch} = useQuery({
+
+    const {data,isLoading,isError,refetch} = useQuery({
 
         queryKey:["donations",user?.email],
         queryFn: async ()=>{
@@ -34,27 +37,32 @@ const DonorDashboard =()=>{
     if (isLoading) return <p>Loading donation requests...</p>;
     if (isError) return <p>Failed to load donation requests.</p>;
 
-    
+    const donations = data?.result;
     const recentDonations = donations
     .sort((a,b)=> new Date(b.donationDate)-new Date(a.donationDate))
     .slice(0,3);
 
 
 
-    const handleDelete= async(id)=>{
-        const confirm = window.confirm("Are You Sure?")
-        if(!confirm) return;
+    const handleDelete= async()=>{
+            
+            if(!deleteId) return;
 
-        await axios.delete(`/donations-request/${id}`,{
+           
+                await axios.delete(`/donations-request/${deleteId}`,{
                     headers:{
                         authorization: `Bearer ${user?.accessToken}`
                     }
                 });
 
-        refetch();
+            
+            toast.success('Successfully Delete!')
 
-
-    };
+            setDeleteId(null);
+            refetch();
+        };
+        
+        
 
 
     const handleStatus = async(id,donationStatus)=>{
@@ -72,6 +80,11 @@ const DonorDashboard =()=>{
 
     return(
         <div>
+
+            <Toaster
+                position="top-center"
+                reverseOrder={false}
+            />
 
             <div>
                 <h1 className="text-center p-10 text-5xl font-bold">Welcome,<span>{user?.displayName}</span></h1>
@@ -131,7 +144,7 @@ const DonorDashboard =()=>{
 
 
                     <button
-                    onClick={()=>handleDelete(donation._id)}
+                    onClick={()=>setDeleteId(donation._id)}
                     className="btn bg-red-600 text-white font-bold">Delete</button>
                     </div>
                 </td>
@@ -152,8 +165,35 @@ const DonorDashboard =()=>{
 )}
 
 
+{deleteId && (
+  <div open className="modal modal-open inset-0 shadow">
+    <div className="modal-box border-4 border-red-600 p-4 min-w-[300px]">
+      <h3 className="font-bold text-xl text-center">Delete Donation Request</h3>
+      <p className="p-4">
+        Are You Sure,You wanted to Delete this Blood Request?
+      </p>
+      <div className="modal-action flex flex-row justify-center items-center">
+        <button
+          className="btn"
+          onClick={() => setDeleteId(null)}
+        >
+          Cancel
+        </button>
+        <button
+          className="btn bg-red-600 text-white"
+          onClick={handleDelete}
+        >
+          Confirm Delete
+        </button>
+      </div>
+    </div>
+  </div>
+)}
 
-        </div>
+
+
+
+</div>
     )
 
 }

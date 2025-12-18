@@ -62,16 +62,37 @@ const Register =()=>{
 
 
 
+    // Image upload...........................
+  const handlePhotoUpload = async (file) => {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    ///const API_KEY="e3660bf232ca76595da4fe9d3b4acb79";
+    const API_KEY = import.meta.env.VITE_API_KEY;
+
+    const res = await fetch(
+        `https://api.imgbb.com/1/upload?key=${API_KEY}`,
+        { method: "POST", body: formData }
+    );
+
+    const data = await res.json();
+    console.log("ImageBB response:", data);
+    return data.success ? data.data.url : "";
+};
+
+
+
+
     
     const handleRegister =(event)=>{
         event.preventDefault();
 
-        const form = event.target;
+        //const form = event.target;
         const email = event.target.email.value;
         const password = event.target.password.value;
         const terms = event.target.terms.checked;
         const name = event.target.name.value;
-        const photo = event.target.photo.value;
+        const photo = event.target.photo.files[0];
         const blood = event.target.blood.value;
         const confirm = event.target.confirm.value;
         const upozila = event.target.upozila.value;
@@ -114,7 +135,8 @@ const Register =()=>{
         }
 
         createUser(email,password)
-        .then(result => {
+        .then( async result => {
+
 
                 const firebaseUser = result.user;
 
@@ -123,10 +145,20 @@ const Register =()=>{
 
                 event.target.reset();
 
+                
+            let photoURL = ""; 
+            
+            if(photo){
+                photoURL = await handlePhotoUpload(photo);
+                console.log("Uploaded photo URL:", photoURL);
+            }
+
+                
+
                 //update user profile
                 const profile ={
                     displayName:name,
-                    photoURL:photo
+                    photoURL:photoURL
                 }
 
 
@@ -149,7 +181,7 @@ const Register =()=>{
                     uid: firebaseUser.uid,
                     name,
                     email,
-                    photo,
+                    photo:photoURL,
                     blood,
                     district: districtName,
                     upozila: upozilaName,

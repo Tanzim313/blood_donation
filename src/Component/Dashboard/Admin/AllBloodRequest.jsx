@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { AuthContext } from "../../../Authprovider/AuthContext";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { Link } from "react-router";
+import toast, { Toaster } from "react-hot-toast";
 
 const AllBloodRequest=()=>{
 
@@ -12,6 +13,9 @@ const AllBloodRequest=()=>{
     const [statusFilter,setStatusFilter] = useState("all")
     const [page,setPage] = useState(1);
     const limit = 5;
+
+    const [deleteId,setDeleteId]= useState(null)
+
 
     const {data,isLoading,isError} = useQuery({
     
@@ -47,16 +51,21 @@ const AllBloodRequest=()=>{
         if (isError) return <p>Failed to load donation requests.</p>;
 
 
-        const handleDelete= async(id)=>{
-            const confirm = window.confirm("Are You Sure?")
-                if(!confirm) return;
+        const handleDelete= async()=>{
+            
+            if(!deleteId) return;
 
-                await axios.delete(`/donations-request/${id}`,{
+                await axios.delete(`/donations-request/${deleteId}`,{
                     headers:{
                         authorization: `Bearer ${user?.accessToken}`
                     }
                 });
 
+            
+            toast.success('Successfully toasted!')
+
+            setDeleteId(null);
+            refetch();
         };
         
         
@@ -66,7 +75,7 @@ const AllBloodRequest=()=>{
                         authorization: `Bearer ${user?.accessToken}`
                     }
                 });
-                
+
         console.log("status:",donationStatus)
 
         }
@@ -80,7 +89,10 @@ const AllBloodRequest=()=>{
     
     return(
         <div className="flex flex-col justify-center items-center mt-20">
-
+            <Toaster
+                position="top-center"
+                reverseOrder={false}
+            />
             <div className="mb-10">
                 <select className="select select-bordered w-[280px]" 
                 value={statusFilter}
@@ -152,7 +164,7 @@ const AllBloodRequest=()=>{
 
 
                     <button
-                    onClick={()=>handleDelete(donation._id)}
+                    onClick={()=>setDeleteId(donation._id)}
                     className="btn bg-red-600">Delete</button>
                 
                 </div>
@@ -179,6 +191,34 @@ const AllBloodRequest=()=>{
         </button>
     ))}
 </div>
+
+
+{deleteId && (
+  <div open className="modal modal-open inset-0 shadow">
+    <div className="modal-box border-4 border-red-600 p-4 min-w-[300px]">
+      <h3 className="font-bold text-xl text-center">Delete Donation Request</h3>
+      <p className="p-4">
+        Are You Sure,You wanted to Delete this Blood Request?
+      </p>
+      <div className="modal-action flex flex-row justify-center items-center">
+        <button
+          className="btn"
+          onClick={() => setDeleteId(null)}
+        >
+          Cancel
+        </button>
+        <button
+          className="btn bg-red-600 text-white"
+          onClick={handleDelete}
+        >
+          Confirm Delete
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+
 
 </div>
 )
