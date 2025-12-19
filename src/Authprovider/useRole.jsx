@@ -13,7 +13,7 @@ const useRole = ()=>{
         queryKey:['role',user?.email],
         queryFn:async () =>{
                 const res = await fetch(
-                        `http://localhost:3000/users/${user?.email}/role`
+                        `https://blood-server-topaz.vercel.app/users/${user?.email}/role`
                 );
                 const data = await res.json();
         

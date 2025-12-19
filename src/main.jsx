@@ -166,12 +166,8 @@ const router = createBrowserRouter([
       ,
       {
         path:'all-users',
-        element:
-        <PrivateRoutes>
-          <AdminRoutes>
-                    <AllUsers/>
-          </AdminRoutes>      
-        </PrivateRoutes>,  
+        element:<PrivateRoutes><AdminRoutes><AllUsers/></AdminRoutes></PrivateRoutes>,
+        //element: <AllUsers/>
         
       }
       ,
