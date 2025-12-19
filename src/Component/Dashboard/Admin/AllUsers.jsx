@@ -5,6 +5,7 @@ import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { FaUserCircle } from "react-icons/fa";
 import UserActions from "./UserActions";
 import { AuthContext } from "../../../Authprovider/AuthContext";
+import toast, { Toaster } from "react-hot-toast";
 
 
 export const AllUsers =()=>{
@@ -52,7 +53,8 @@ export const AllUsers =()=>{
                         authorization: `Bearer ${user?.accessToken}`
                     }
                 });
-        alert("user blocked successfully")
+        toast.success('user blocked Successfully!')
+
     }
     catch(err){
         console.error(err);
@@ -66,7 +68,7 @@ export const AllUsers =()=>{
                         authorization: `Bearer ${user?.accessToken}`
                     }
                 });
-            alert("user Unblocked successfully")
+            toast.success('user Unblocked successfully')
 
         }catch(err){
         console.error(err);
@@ -81,7 +83,7 @@ export const AllUsers =()=>{
                         authorization: `Bearer ${user?.accessToken}`
                     }
                 });
-            alert("user changed to donor successfully")
+            toast.success('user changed to donor successfully')
 
         }catch(err){
             console.error(err);
@@ -96,8 +98,7 @@ export const AllUsers =()=>{
                         authorization: `Bearer ${user?.accessToken}`
                     }
                 });
-
-            alert("user changed to volunteer successfully")
+            toast.success('user changed to volunteer successfully')
 
         }catch(err){
             console.error(err);
@@ -112,7 +113,8 @@ export const AllUsers =()=>{
                         authorization: `Bearer ${user?.accessToken}`
                     }
                 });
-            alert("user changed to admin successfully")
+            toast.success('user changed to admin successfully')
+            
 
         }catch(err){
             console.error(err);
@@ -123,6 +125,8 @@ export const AllUsers =()=>{
 
     return(
         <div className="mt-4 flex flex-col justify-center items-center p-2">
+
+            <Toaster position="top-center" reverseOrder={false}/>
 
              <div className="w-[250px] mb-4">
                 <select className=" select select-bordered" 

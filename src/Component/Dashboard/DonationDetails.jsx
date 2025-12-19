@@ -58,7 +58,7 @@ const DonationDetails=()=>{
                     <p>recipientUpazila:{donation.recipientUpazila}</p>
                     <p>hospitalName:{donation.hospitalName}</p>
                     <p>fullAddress:{donation.fullAddress}</p>
-                    <p>donationData:{donation.donationData}</p>
+                    <p>donationData:{donation.donationDate}</p>
                     <p>donationTime:{donation.donationTime}</p>
                     <p>requestMessage:{donation.requestMessage}</p>
                     <p>donationStatus:{donation.donationStatus}</p>

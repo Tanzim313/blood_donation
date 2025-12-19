@@ -1,9 +1,11 @@
-import React from "react";
+import React, { use } from "react";
 import { Link, Outlet } from "react-router";
 import useRole from "../../Authprovider/useRole";
+import { AuthContext } from "../../Authprovider/AuthContext";
 
 const Dashboard = () => {
   const { role, isRoleLoading } = useRole();
+  const {user} = use(AuthContext);
 
   if (isRoleLoading) {
     return (
@@ -18,14 +20,14 @@ const Dashboard = () => {
       <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
 
       <div className="drawer-content">
-        <nav className="navbar w-full bg-base-300">
+        <nav className="navbar w-full bg-base-300 p-4">
           <label htmlFor="my-drawer-2" className="btn btn-square btn-ghost">
             
             <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
-            className="inline-block h-6 w-6 stroke-current"
+            className="inline-block h-6 w-6 stroke-current text-red-600"
           >
             <path
               strokeLinecap="round"
@@ -36,7 +38,10 @@ const Dashboard = () => {
           </svg>
 
           </label>
-          <div className="px-5 font-bold">Dashboard</div>
+          <div className="px-5 font-bold text-red-600 text-xl">Dashboard</div>
+          <div className="mx-10">
+          <img className="sm:w-[50px] sm:h-[50px] w-[30px] h-[30px] rounded-full border-2 border-red-600 border-[#ffffff8c]" src={user.photoURL} alt="" /> 
+          </div>
         </nav>
 
         <Outlet />

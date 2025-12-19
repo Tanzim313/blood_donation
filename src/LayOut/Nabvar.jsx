@@ -74,8 +74,9 @@ const Nabvar =()=>{
         {links}
       </ul>
     </div>
-    <a className="text-xl">
-      <span className="text-[#ff0000] text-2xl sm:text-3xl italic font-bold ">Blood</span><span className="italic font-bold">Finding</span></a>
+    <Link to="/" className="text-xl">
+      <span className="text-[#ff0000] text-2xl sm:text-3xl italic font-bold ">Blood</span><span className="italic font-bold">Finding</span>
+    </Link>
   </div>
   <div className=" navbar-center hidden lg:flex">
     <ul className="menu menu-horizontal px-1">

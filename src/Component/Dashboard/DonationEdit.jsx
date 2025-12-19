@@ -46,7 +46,7 @@ const DonationEdit=()=> {
     const {data:upazila = []}=useQuery({
         queryKey:["upazila"],
         queryFn: async()=>{
-            const res = await axios.get("upazila");
+            const res = await axios.get("/upazila");
 
             return res.data;
         }
@@ -115,7 +115,7 @@ const DonationEdit=()=> {
             
             toast.success('Successfully Donation Updated!')
             
-            navigate("/dashboard/my-donation-requests");
+            ///navigate("/dashboard/my-donation-requests");
         },
         onError:()=>{
             toast.success('Successfully Failed!')

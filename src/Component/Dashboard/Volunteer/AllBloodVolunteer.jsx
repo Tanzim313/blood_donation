@@ -154,6 +154,8 @@ const AllBloodVolunteer=()=>{
                             tabIndex={0}
                             className="dropdown-content menu p-2 shadow bg-red-600 rounded-box w-44 text-white text-center font-bold "
                         >
+
+                        {/* 
                         {donation.donationStatus === "pending" && (
 
                             <li>
@@ -169,6 +171,7 @@ const AllBloodVolunteer=()=>{
                                 </button>
                             </li>
                         )}
+                */}
 
 
                         {donation.donationStatus === "inprogress" && (
@@ -181,6 +184,7 @@ const AllBloodVolunteer=()=>{
                                             "done"
                                         )
                                     }
+                                    className="mb-2"
                                 >
                                     done
                                 </button>
@@ -202,11 +206,15 @@ const AllBloodVolunteer=()=>{
                             
                         )}
 
+                        {/* 
+
                         {(donation.donationStatus==="done"||donation.donationStatus==="cancel")&&(
                             <li>
                                 {donation.donationStatus === "cancel"? "cancel successfully" :"done successfully"}
                             </li>
                         )}
+                        
+                    */}
                         
                         </ul>
 
