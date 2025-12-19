@@ -25,20 +25,20 @@ Server site url: https://blood-server-topaz.vercel.app
 
 # ClientSide:
 
-1.react
-2.react-router
-3.axios
-4.firebase
-5.tailwindcss
-6.react-hot-toast
-7.firmer-motion
-8.daisy ui etc...
+1.react 
+2.react-router 
+3.axios 
+4.firebase 
+5.tailwindcss 
+6.react-hot-toast 
+7.firmer-motion 
+8.daisy ui etc... 
 
-#Server Side:
+# ServerSide:
 
-1.express
-2.cors
-3.mongodb
-4.dotenv
-5.firebase-admin
-6.stripe etc....
+1.express 
+2.cors 
+3.mongodb 
+4.dotenv 
+5.firebase-admin 
+6.stripe etc.... 
