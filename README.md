@@ -23,7 +23,7 @@ Server site url: https://blood-server-topaz.vercel.app
 
 # npm packages:
 
-#Client Side--
+# ClientSide:
 
 1.react
 2.react-router
@@ -34,7 +34,7 @@ Server site url: https://blood-server-topaz.vercel.app
 7.firmer-motion
 8.daisy ui etc...
 
-#Server Side--
+#Server Side:
 
 1.express
 2.cors
