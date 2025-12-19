@@ -1,10 +1,12 @@
-#blood_donation
+# blood_donation:
+
 project name:BloodFinding
 
 BloodFinding is a blood donation management platform that allows users to easily find blood donors, create blood donation requests, manage donation statuses, and track funding or donations.
 This project is primarily designed to help people quickly and efficiently find blood donors when needed.
 
 Client site url: https://sweet-pavlova-08681e.netlify.app
+
 Server site url: https://blood-server-topaz.vercel.app
 
 # Key Feature:
@@ -19,9 +21,10 @@ Server site url: https://blood-server-topaz.vercel.app
 9.Client deployment on Netlify
 
 
-#npm:
+# npm packages:
 
 #Client Side--
+
 1.react
 2.react-router
 3.axios
@@ -32,6 +35,7 @@ Server site url: https://blood-server-topaz.vercel.app
 8.daisy ui etc...
 
 #Server Side--
+
 1.express
 2.cors
 3.mongodb
