@@ -15,7 +15,7 @@ export const AllUsers =()=>{
     const axios = useAxiosSecure();
     const [statusFilter,setStatusFilter] = useState("all");
     
-    const {data:userData=[],isLoading,isError} = useQuery({
+    const {data:userData=[],isLoading,isError,refetch} = useQuery({
 
         queryKey: ["users",statusFilter],
         queryFn: async ()=>{
@@ -53,6 +53,7 @@ export const AllUsers =()=>{
                         authorization: `Bearer ${user?.accessToken}`
                     }
                 });
+        refetch();
         toast.success('user blocked Successfully!')
 
     }
@@ -68,6 +69,7 @@ export const AllUsers =()=>{
                         authorization: `Bearer ${user?.accessToken}`
                     }
                 });
+            refetch();
             toast.success('user Unblocked successfully')
 
         }catch(err){
@@ -83,6 +85,7 @@ export const AllUsers =()=>{
                         authorization: `Bearer ${user?.accessToken}`
                     }
                 });
+            refetch();
             toast.success('user changed to donor successfully')
 
         }catch(err){
@@ -98,6 +101,7 @@ export const AllUsers =()=>{
                         authorization: `Bearer ${user?.accessToken}`
                     }
                 });
+            refetch();
             toast.success('user changed to volunteer successfully')
 
         }catch(err){
@@ -113,6 +117,7 @@ export const AllUsers =()=>{
                         authorization: `Bearer ${user?.accessToken}`
                     }
                 });
+            refetch();
             toast.success('user changed to admin successfully')
             
 

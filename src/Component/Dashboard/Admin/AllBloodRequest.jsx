@@ -17,7 +17,7 @@ const AllBloodRequest=()=>{
     const [deleteId,setDeleteId]= useState(null)
 
 
-    const {data,isLoading,isError} = useQuery({
+    const {data,isLoading,isError,refetch} = useQuery({
     
             queryKey:["donations",user,statusFilter,page],
             enabled: !!user,
@@ -62,7 +62,7 @@ const AllBloodRequest=()=>{
                 });
 
             
-            toast.success('Successfully toasted!')
+            toast.success('Successfully Delete!')
 
             setDeleteId(null);
             refetch();
@@ -77,6 +77,8 @@ const AllBloodRequest=()=>{
                 });
 
         console.log("status:",donationStatus)
+        refetch();
+        toast.success(`Successfully ${donationStatus}!`)
 
         }
     
