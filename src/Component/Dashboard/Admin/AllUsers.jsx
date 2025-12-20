@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+//import axios from "axios";
 import React, { use, useState } from "react";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { FaUserCircle } from "react-icons/fa";

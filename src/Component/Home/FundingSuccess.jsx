@@ -49,7 +49,7 @@ const FundingSuccess=()=>{
     },[session_id]);
 
     return(
-        <div className="p-40 text-center">
+        <div className="p-40 text-center font-bold text-2xl">
             <h1>Payment Successful.....</h1>
             <p>Thank You For  Your Donation</p>
 

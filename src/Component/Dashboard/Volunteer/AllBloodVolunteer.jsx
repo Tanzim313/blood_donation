@@ -14,7 +14,7 @@ const AllBloodVolunteer=()=>{
     const [page,setPage] = useState(1);
     const limit = 5;
 
-    const {data,isLoading,isError} = useQuery({
+    const {data,isLoading,isError,refetch} = useQuery({
     
             queryKey:["donations",user,statusFilter,page],
             enabled: !!user,
