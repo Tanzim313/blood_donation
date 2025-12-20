@@ -7,11 +7,10 @@ const Footer=()=>{
 
             <footer className="footer sm:footer-horizontal bg-base-300 text-base-content p-10">
   <nav>
-    <h6 className="footer-title">Services</h6>
-    <a className="link link-hover">Branding</a>
-    <a className="link link-hover">Design</a>
-    <a className="link link-hover">Marketing</a>
-    <a className="link link-hover">Advertisement</a>
+    <h6 className="footer-title">Donate Blood</h6>
+    <a className="link link-hover">Bangladesh</a>
+    <a className="link link-hover">Bangladesh Red Cross</a>
+    <a className="link link-hover">Give Life</a>
   </nav>
   <nav>
     <h6 className="footer-title">Company</h6>

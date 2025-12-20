@@ -2,6 +2,7 @@ import React, { use } from "react";
 import { Link, Outlet } from "react-router";
 import useRole from "../../Authprovider/useRole";
 import { AuthContext } from "../../Authprovider/AuthContext";
+import Footer from "../../LayOut/Footer";
 
 const Dashboard = () => {
   const { role, isRoleLoading } = useRole();
@@ -45,6 +46,8 @@ const Dashboard = () => {
         </nav>
 
         <Outlet />
+
+        <Footer></Footer>
 
       </div>
 
