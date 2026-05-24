@@ -1,11 +1,11 @@
-import React, { use } from "react";
+import React, { useContext } from "react";
 import { AuthContext } from "./AuthContext";
 import { useQuery } from "@tanstack/react-query";
 
 
 
 const useRole = ()=>{
-    const {user} = use(AuthContext);
+    const {user} = useContext(AuthContext);
 
     
 

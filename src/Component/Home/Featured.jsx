@@ -1,62 +1,47 @@
 import React from "react";
 import { FaHandHoldingHeart, FaMapMarkedAlt, FaUsers } from "react-icons/fa";
 
+const features = [
+  {
+    icon: <FaHandHoldingHeart />,
+    title: "Donor community",
+    description: "Registered donor profiles make it easier to match patients with compatible blood groups.",
+  },
+  {
+    icon: <FaMapMarkedAlt />,
+    title: "Location filters",
+    description: "District and upazila filters reduce noise and help requesters focus on nearby donors.",
+  },
+  {
+    icon: <FaUsers />,
+    title: "Role-based dashboard",
+    description: "Donors, volunteers, and admins each get focused tools for their daily responsibilities.",
+  },
+];
 
-const Featured =()=>{
-
-
-    return(
-        <div className="py-16 bg-red-50 mt-15 ">
-            <h2 className="text-4xl font-bold text-center text-red-600 mb-10">
-                Why Donate Blood?
-            </h2>
-
-        <div className="">
-
-            <div className="p-4 flex flex-col md:grid-cols-3 gap-2 px-6 md:px-16 mt-4">
-                <div className="flex justify-center mb-4">
-                    <FaHandHoldingHeart className="text-red-600 text-5xl"></FaHandHoldingHeart>
-                </div>
-                <h2 className="text-xl font-semibold text-center text-red-600">
-                    Join Our Donor Community
-                </h2>
-                <p className="text-gray-500 mt-2 text-center">
-                    connect with thousands of active donors ready to help people across the country.
-                </p>
-            </div>
-
-            <div className="flex flex-col gap-2 px-6 md:px-16 mt-8">
-                <div className="flex justify-center mb-4">
-                    <FaMapMarkedAlt className="text-red-600 text-5xl"></FaMapMarkedAlt>
-                </div>
-                <h2 className="text-xl font-semibold text-center text-red-600">
-                    Join Our Donor Community
-                </h2>
-                <p className="text-gray-500 mt-2 text-center">
-                    connect with thousands of active donors ready to help people across the country.
-                </p>
-            </div>
-
-
-             <div className="flex flex-col gap-2 px-6 md:px-16 mt-8">
-                <div className="flex justify-center mb-4">
-                    <FaUsers className="text-red-600 text-5xl"></FaUsers>
-                </div>
-                <h2 className="text-xl font-semibold text-center text-red-600">
-                    Join Our Donor Community
-                </h2>
-                <p className="text-gray-500 text-center">
-                    connect with thousands of active donors ready to help people across the country.
-                </p>
-            </div>
-
-
+const Featured = () => {
+  return (
+    <section className="bg-slate-50 px-4 py-16 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-10 max-w-2xl">
+          <p className="text-sm font-semibold uppercase text-red-600">Platform strengths</p>
+          <h2 className="mt-3 text-3xl font-bold text-slate-950 sm:text-4xl">Built for urgent, repeatable workflows.</h2>
         </div>
-            
 
+        <div className="grid gap-4 md:grid-cols-3">
+          {features.map((feature) => (
+            <article key={feature.title} className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+              <div className="flex h-12 w-12 items-center justify-center rounded-md bg-red-50 text-xl text-red-600">
+                {feature.icon}
+              </div>
+              <h3 className="mt-5 text-xl font-semibold text-slate-950">{feature.title}</h3>
+              <p className="mt-3 text-sm leading-6 text-slate-600">{feature.description}</p>
+            </article>
+          ))}
         </div>
-    )
-
-}
+      </div>
+    </section>
+  );
+};
 
 export default Featured;

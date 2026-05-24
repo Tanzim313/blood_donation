@@ -1,7 +1,8 @@
-import React, { use } from "react";
+import React, { useContext } from "react";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
 import { AuthContext } from "../../../Authprovider/AuthContext";
+import { Link } from "react-router";
 import { FaDonate, FaUsers } from "react-icons/fa";
 import { MdBloodtype } from "react-icons/md";
 
@@ -9,7 +10,7 @@ import { MdBloodtype } from "react-icons/md";
 
 const VolunteerDashboard =()=>{
 
-    const {user} = use(AuthContext);
+    const {user} = useContext(AuthContext);
     const axios = useAxiosSecure();
 
     const {data:users = []}=useQuery({
@@ -85,7 +86,11 @@ const VolunteerDashboard =()=>{
                     </div>
     
                 </div>
-    
+                <div className="mt-6 flex justify-center">
+                    <Link to="/" className="btn rounded-md border-slate-300 bg-slate-950 text-white hover:bg-slate-900">
+                        Back to Home
+                    </Link>
+                </div>
     
             </div>
     )

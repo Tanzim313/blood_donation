@@ -1,5 +1,4 @@
-import React, { use } from "react";
-import { Navigate, useLocation } from "react-router";
+import React, { useContext } from "react";
 import useRole from "../hooks/useRole";
 import { AuthContext } from "../Authprovider/AuthContext";
 import Error from "../Error/Error";
@@ -7,7 +6,7 @@ import Error from "../Error/Error";
 
 const VolunteerRoutes =({children})=>{
 
-    const {user,loading} = use(AuthContext);
+    const {loading} = useContext(AuthContext);
     const {role,isRoleLoading} = useRole();
 
     //const location = useLocation();

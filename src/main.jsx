@@ -6,7 +6,7 @@ import Register from './Component/Register/Register.jsx';
 import Root from './Routes/Root.jsx';
 import AuthProvider from './Authprovider/AuthProvider.jsx';
 import './index.css'
-import Home from './Component/Home/Home.jsx';
+import HomeRoute from './Routes/HomeRoute.jsx';
 import Dashboard from './Component/Dashboard/Dashboard.jsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Profile from './Component/Dashboard/Profile.jsx';
@@ -41,7 +41,7 @@ const router = createBrowserRouter([
     children:[
       {
         path:"/",
-        element:<Home/>
+        element:<HomeRoute/>
       },
       {
         path:"search",

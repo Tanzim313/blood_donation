@@ -1,361 +1,293 @@
-//import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
-import React, { use, useState } from "react";
-//import { auth } from "../../firebase.init";
-import { IoEye } from "react-icons/io5";
-import { IoMdEyeOff } from "react-icons/io";
+import React, { useContext, useMemo, useState } from "react";
 import { Link, useLoaderData, useNavigate } from "react-router";
 import { AuthContext } from "../../Authprovider/AuthContext";
-import { sendEmailVerification, updateProfile } from "firebase/auth";
 import { auth } from "../../firebase.init";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { sendEmailVerification } from "firebase/auth";
+import toast, { Toaster } from "react-hot-toast";
+import { IoEye } from "react-icons/io5";
+import { IoMdEyeOff } from "react-icons/io";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 
+const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
-const Register =()=>{
-    
-    const {createUser} = use(AuthContext);
-    const navigate = useNavigate();
+const Register = () => {
+  const { createUser, updateUser } = useContext(AuthContext);
+  const { districts = [], upozilas = [] } = useLoaderData();
+  const navigate = useNavigate();
+  const axios = useAxiosSecure();
 
-    const [success,setSuccess] = useState(false);
-    const [error,setError] = useState('');
-    const [showPassword,setShowPassword] = useState(false);
-    const [showConfirm,setShowConfirm] = useState(false);
+  const [selectedDistrict, setSelectedDistrict] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [photoPreview, setPhotoPreview] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
+  const filteredUpozilas = useMemo(
+    () => upozilas.filter((item) => item.district_id === selectedDistrict),
+    [upozilas, selectedDistrict]
+  );
 
-    //const {districts,upozilas} = useLoaderData();
-
-    const [selectedDistrict,setSelectedDistrict] = useState("");
-    
-    //const [filteredUpozilas,setFilteredUpozilas] = useState([]);
-    
-    const axios = useAxiosSecure();
-
-    //districts
-    const {data:district=[]}=useQuery({
-
-        queryKey: ["district"],
-        queryFn: async()=>{
-            const res = await axios.get("/district");
-
-            return res.data;
-        },
-
-    });
-
-    //upazilas
-
-    const {data:upozila = []} = useQuery({
-        queryKey: ["upazila"],
-        queryFn: async()=>{
-            const res = await axios.get("/upazila");
-
-            return res.data;
-        }
-    })
-
-    const filteredUpozilas = upozila.filter(
-        (u)=>u.district_id === selectedDistrict
-    );
-
-    console.log("selectedDistrict:", selectedDistrict);
-    console.log("upozila_list:", upozila);
-
-
-
-    // Image upload...........................
-  const handlePhotoUpload = async (file) => {
-    const formData = new FormData();
-    formData.append("image", file);
-
-    ///const API_KEY="e3660bf232ca76595da4fe9d3b4acb79";
-    
-    const API_KEY = import.meta.env.VITE_API_KEY;
-
-    const res = await fetch(
-        `https://api.imgbb.com/1/upload?key=${API_KEY}`,
-        { method: "POST", body: formData }
-    );
-
-    const data = await res.json();
-    console.log("ImageBB response:", data);
-    return data.success ? data.data.url : "";
-};
-
-
-
-
-    
-    const handleRegister =(event)=>{
-        event.preventDefault();
-
-        //const form = event.target;
-        const email = event.target.email.value;
-        const password = event.target.password.value;
-        const terms = event.target.terms.checked;
-        const name = event.target.name.value;
-        const photo = event.target.photo.files[0];
-        const blood = event.target.blood.value;
-        const confirm = event.target.confirm.value;
-        const upozila = event.target.upozila.value;
-
-
-
-        console.log('register click',name);
-
-        //reset error
-        setError('');
-        setSuccess(false);
-
-
-        if(password !== confirm){
-            setError('Password & Confirm Password does not match');
-            return;
-        }
-
-        const Uppercase = /[A-Z]/.test(password);
-        const Lowercase = /[a-z]/.test(password);
-        const isLength = password.length>=6;
-
-        if(!Uppercase){
-            setError('Password Must Contain At Least 1 UpperCase Letter');
-            return;
-        }
-        if(!Lowercase){
-            setError('PassWord Must Contain At Least 1 LowerCase Letter');
-            return;
-        }
-        if(!isLength){
-            setError('PassWord Must be at Least 6 characters Long');
-            return ;
-        }
-
-        if(!terms){
-            setError('Please accept our terms and conditions');
-
-            return ;
-        }
-
-        createUser(email,password)
-        .then( async result => {
-
-
-                const firebaseUser = result.user;
-
-                console.log('after creation a new user',result.user)
-                setSuccess(true);
-
-                event.target.reset();
-
-                
-            let photoURL = ""; 
-            
-            if(photo){
-                photoURL = await handlePhotoUpload(photo);
-                console.log("Uploaded photo URL:", photoURL);
-            }
-
-                
-
-                //update user profile
-                const profile ={
-                    displayName:name,
-                    photoURL:photoURL
-                }
-
-
-                updateProfile(result.user,profile)
-                .then(()=>{})
-                .catch()
-
-                //send verification email
-
-                sendEmailVerification(result.user)
-                    .then(()=>{
-                        alert('please login to your email and verify our email')
-                    })
-                
-                const districtName = district.find(d => d.id === selectedDistrict)?.name || "";
-                const upozilaName = filteredUpozilas.find(u => u.id === upozila)?.name || "";   
-
-
-                userMutation.mutate({
-                    uid: firebaseUser.uid,
-                    name,
-                    email,
-                    photo:photoURL,
-                    blood,
-                    district: districtName,
-                    upozila: upozilaName,
-                    
-                    });
-
-                    navigate("/");
-
-                    //auth.signOut()
-                    ///.then(()=>{
-                    //        navigate("/login");
-                   // }); 
-
-            })
-            .catch((error)=>{
-                console.log(error.message)
-                setError(error.message);
-            })
-
-
+  const handlePhotoChange = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      setPhotoPreview("");
+      return;
     }
 
-    const handleTogglePasswordShow = (event) =>{
-        event.preventDefault();
-        setShowPassword(!showPassword);
+    const reader = new FileReader();
+    reader.onload = () => {
+      setPhotoPreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleTogglePassword = (event) => {
+    event.preventDefault();
+    setShowPassword((prev) => !prev);
+  };
+
+  const handleRegister = async (event) => {
+    event.preventDefault();
+    setError("");
+    setLoading(true);
+
+    const form = event.target;
+    const fullName = form.fullName.value.trim();
+    const email = form.email.value.trim();
+    const password = form.password.value;
+    const confirmPassword = form.confirmPassword.value;
+    const blood = form.blood.value;
+    const districtId = form.district.value;
+    const upozila = form.upozila.value;
+    const districtName = districts.find((district) => district.id === districtId)?.name || "";
+
+    if (!fullName || !email || !password || !confirmPassword || !blood || !districtId || !upozila) {
+      setError("Please complete all required fields.");
+      setLoading(false);
+      return;
     }
 
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      setLoading(false);
+      return;
+    }
 
-    const userMutation = useMutation({
-        mutationFn: async(userData)=>{
-            const res = await axios.post("/users",userData);
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      setLoading(false);
+      return;
+    }
 
-            return res.data;
-        },
-        onSuccess:()=>{
-            console.log("User saved to db successfully!!")
-        }
-    })
+    try {
+      await createUser(email, password);
+      await updateUser({ displayName: fullName, photoURL: photoPreview || "" });
+      await axios.post("/users", {
+        name: fullName,
+        email,
+        photo: photoPreview || "",
+        blood,
+        district: districtName,
+        upozila,
+      });
+      await sendEmailVerification(auth.currentUser);
 
+      toast.success("Registration successful. Please verify your email.");
+      form.reset();
+      setSelectedDistrict("");
+      setPhotoPreview("");
+      navigate("/login");
+    } catch (err) {
+      setError(err.message || "Registration failed.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-
-  return(
-        <div>
-        <div className="hero bg-red-300 min-h-screen">
-        <div className="hero-content flex-col lg:flex-row-reverse">
-        <div className="text-center lg:text-left">
-         <h1 className="text-5xl font-bold mb-10 text-red-600">Register now!</h1>
-        </div>
-        <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
-        <div className="card-body">
-        <form onSubmit={handleRegister} action="">
-        <fieldset className="fieldset">
-        <label className="label">Your Name</label>
-            <input type="text" name="name" className="input" placeholder="Your Name" />
-
-        <label className="label">Email</label>
-        <input type="email" name="email" className="input" placeholder="Email" />
-            
-
-            {/* photo Url */}
-
-            <label className="label"> Your Photo </label>
-            <input type="file" name="photo" className="file-input" />
-            
-            
-            <label className="label" >Blood Group</label>
-            <select name="blood" className="select select-bordered" required>
-                <option >A+</option>
-                <option >A-</option>
-                <option >B+</option>
-                <option >B-</option>
-                <option >AB+</option>
-                <option >AB-</option>
-                <option >O+</option>
-                <option >O-</option>
-            </select>
-
-            <label className="label">District</label>
-                  <select 
-                  name="district" 
-                  className="select select-bordered" 
-                  value={selectedDistrict}
-                  onChange={(e)=>setSelectedDistrict(e.target.value)} required>
-                    
-                    <option value="">Select District</option>
-                    {district.map((district, index) => (
-                      <option key={index} value={district.id}>{district.name}</option>
-                    ))}
-                  </select>
-
-                  <label className="label">Upozila</label>
-                  <select 
-                  name="upozila" 
-                  className="select select-bordered" 
-                  required>
-
-                <option value="">Select Upozila</option>
-
-                    {filteredUpozilas.map((upozila, index) => (
-                      <option key={index} value={upozila.id}>{upozila.name}</option>
-                    ))}
-
-                  </select>
-            
-            
-            
-            <label className="label">Password</label>
-            <div className="relative">
-                <input 
-                    type={showPassword? "text":"password"}
-                    name="password" 
-                    className="input" 
-                    placeholder="Password" />
-
-                <button onClick={handleTogglePasswordShow} className="absolute right-2 top-1 rounded-md btn btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl">
-                    {showPassword? <IoEye /> : <IoMdEyeOff /> }</button>
+  return (
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(248,113,113,0.18),_transparent_20%),radial-gradient(circle_at_bottom_right,_rgba(248,113,113,0.16),_transparent_30%),bg-slate-950] py-16">
+      <Toaster />
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div className="grid gap-10 rounded-[2rem] border border-white/10 bg-slate-900/80 p-8 shadow-2xl backdrop-blur-xl lg:grid-cols-[1.15fr_0.85fr]">
+          <div className="space-y-6 text-slate-100">
+            <div className="inline-flex items-center gap-3 rounded-full bg-red-500/10 px-4 py-2 text-sm font-semibold text-red-200">
+              Create a donor profile with district and upazila selection
             </div>
-
-
-
-            <label className="label">Confirm Password</label>
-            <div className="relative">
-                <input 
-                    type={showConfirm? "text":"password"}
-                    name="confirm" 
-                    className="input" 
-                    placeholder="Confirm Password"
-                    required
-                    />
-
-                <button onClick={(e)=>{
-                    e.preventDefault();
-                    setShowConfirm(!showConfirm);
-                }} 
-                className="absolute right-2 top-1 rounded-md btn btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl">
-                    {showConfirm? <IoEye /> : <IoMdEyeOff /> }</button>
-            </div>
-
-
-
-
-
             <div>
-                <label class="label">
-                    <input 
-                    type="checkbox"  
-                    class="checkbox"
-                    name="terms"
+              <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">Join LifeFlow today</h1>
+              <p className="mt-4 max-w-xl text-slate-300">
+                Register as a donor to manage your profile, save your preferred location, and receive updates for blood requests near you.
+              </p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-5 text-slate-300">
+                <p className="text-sm uppercase tracking-[0.2em] text-red-300">Verified members</p>
+                <p className="mt-3 text-xl font-semibold text-white">Secure donor registration</p>
+              </div>
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-5 text-slate-300">
+                <p className="text-sm uppercase tracking-[0.2em] text-red-300">Local coverage</p>
+                <p className="mt-3 text-xl font-semibold text-white">Choose your district and upazila</p>
+              </div>
+            </div>
+          </div>
 
-                    />
-                        Accept our terms and Condition
-                </label>
+          <div className="rounded-[2rem] bg-white p-8 shadow-xl shadow-red-500/10">
+            <div className="mb-6">
+              <h2 className="text-3xl font-semibold text-slate-900">Create account</h2>
+              <p className="mt-2 text-sm text-slate-500">Register now to support blood donation requests across your area.</p>
             </div>
 
-            <button className="btn btn-neutral mt-4">Register</button>
+            {error && (
+              <div className="mb-4 rounded-3xl bg-red-500/10 px-4 py-3 text-sm text-red-700">
+                {error}
+              </div>
+            )}
 
-        </fieldset>
-        {
-            error && <p className="text-red-600">{error}</p>
-        }
-        {
-            success && <p className="text-green-600 font-bold " >Account Created Successfully!</p>
-        }
-        </form>
+            <form className="space-y-5" onSubmit={handleRegister}>
+              <div>
+                <label className="mb-2 block text-sm font-medium text-slate-700">Full name</label>
+                <input
+                  name="fullName"
+                  type="text"
+                  required
+                  placeholder="Your full name"
+                  className="w-full rounded-3xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-100"
+                />
+              </div>
 
-        <p className="">Already have an ccount? Please <Link to="/login" className="text-blue-500 underline" >Login</Link> </p>
+              <div>
+                <label className="mb-2 block text-sm font-medium text-slate-700">Email</label>
+                <input
+                  name="email"
+                  type="email"
+                  required
+                  placeholder="example@mail.com"
+                  className="w-full rounded-3xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-100"
+                />
+              </div>
 
+              <div className="grid gap-5 sm:grid-cols-2">
+                <div className="relative">
+                  <label className="mb-2 block text-sm font-medium text-slate-700">Password</label>
+                  <input
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    required
+                    placeholder="Create a password"
+                    className="w-full rounded-3xl border border-slate-300 bg-slate-50 px-4 py-3 pr-14 text-slate-900 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-100"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleTogglePassword}
+                    className="absolute right-3 top-[42px] inline-flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition hover:bg-slate-200"
+                  >
+                    {showPassword ? <IoEye size={18} /> : <IoMdEyeOff size={18} />}
+                  </button>
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-700">Confirm password</label>
+                  <input
+                    name="confirmPassword"
+                    type={showPassword ? "text" : "password"}
+                    required
+                    placeholder="Confirm your password"
+                    className="w-full rounded-3xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-100"
+                  />
+                </div>
+              </div>
+
+              <div className="grid gap-5 sm:grid-cols-2">
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-700">Blood group</label>
+                  <select
+                    name="blood"
+                    required
+                    className="w-full rounded-3xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-100"
+                  >
+                    <option value="">Select blood group</option>
+                    {bloodGroups.map((group) => (
+                      <option key={group} value={group}>
+                        {group}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-700">Profile photo</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoChange}
+                    className="w-full rounded-3xl border border-slate-300 bg-slate-50 px-4 py-2 text-slate-900 outline-none transition file:rounded-full file:border-0 file:bg-red-600 file:px-4 file:py-2 file:text-sm file:text-white file:font-semibold focus:border-red-500 focus:ring-2 focus:ring-red-100"
+                  />
+                </div>
+              </div>
+
+              {photoPreview && (
+                <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+                  <p className="text-sm text-slate-600">Photo preview</p>
+                  <img src={photoPreview} alt="Avatar preview" className="mt-3 h-24 w-24 rounded-full object-cover" />
+                </div>
+              )}
+
+              <div className="grid gap-5 sm:grid-cols-2">
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-700">District</label>
+                  <select
+                    name="district"
+                    required
+                    value={selectedDistrict}
+                    onChange={(event) => {
+                      setSelectedDistrict(event.target.value);
+                    }}
+                    className="w-full rounded-3xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-100"
+                  >
+                    <option value="">Select District</option>
+                    {districts.map((district) => (
+                      <option key={district.id} value={district.id}>
+                        {district.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-700">Upozila</label>
+                  <select
+                    name="upozila"
+                    required
+                    disabled={!selectedDistrict}
+                    className="w-full rounded-3xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-100 disabled:cursor-not-allowed disabled:bg-slate-100"
+                  >
+                    <option value="">Select Upozila</option>
+                    {filteredUpozilas.map((upozila) => (
+                      <option key={upozila.id} value={upozila.name}>
+                        {upozila.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full rounded-3xl bg-red-600 px-6 py-3 text-base font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-red-400"
+              >
+                {loading ? "Creating account..." : "Create account"}
+              </button>
+            </form>
+
+            <p className="mt-6 text-center text-sm text-slate-500">
+              Already have an account? <Link to="/login" className="font-semibold text-red-600 hover:text-red-700">Sign in</Link>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
-        </div>
-    )
-}
+  );
+};
 
-export  default Register;
+export default Register;

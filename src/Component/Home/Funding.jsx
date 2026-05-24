@@ -1,11 +1,11 @@
-import React, { use, useState } from "react";
+import React, { useContext, useState } from "react";
 import { AuthContext } from "../../Authprovider/AuthContext";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
 
 const Funding =()=>{
 
-    const {user} = use(AuthContext);
+    const {user} = useContext(AuthContext);
     const [amount,setAmount] = useState("");
 
     const axios = useAxiosSecure();

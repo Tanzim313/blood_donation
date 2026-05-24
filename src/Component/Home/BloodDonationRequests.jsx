@@ -1,88 +1,85 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import React from "react";
-import useAxiosSecure from "../../hooks/useAxiosSecure";
+import { FaCalendarAlt, FaClock, FaMapMarkerAlt, FaTint } from "react-icons/fa";
 import { Link } from "react-router";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
+const BloodDonationRequests = () => {
+  const axios = useAxiosSecure();
 
-const BloodDonationRequests =()=>{
+  const {data:donations = [], isLoading} = useQuery({
+    queryKey:["pending-donations"],
+    queryFn: async()=>{
+      const res = await axios.get("/pending-donations");
+      return res.data;
+    },
+  });
 
-    const axios = useAxiosSecure();
-
-    const {data:donations=[],isLoading} = useQuery({
-        queryKey:["pending-donations"],
-        queryFn: async()=>{
-                const res = await axios.get("/pending-donations");
-                return res.data
-        },
-    })
-
-    console.log("pending-data:",donations);
-
-    if (isLoading) {
+  if (isLoading) {
     return (
-      <div className="min-h-screen flex justify-center items-center">
-        <span className="loading loading-spinner loading-lg"></span>
+      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+        <span className="loading loading-spinner loading-lg text-red-600"></span>
       </div>
     );
   }
 
-
-    return(
-        <div>
-
-            <div>
-            
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-
-
-                  {donations.map((pending)=>(
-                    <div 
-                    key={pending._id}
-                    className="bg-white rounded-lg shadow p-5  hover:shadow-2xl transition-shadow duration-300 border-l-10 border-red-500"
-                    >
-                        <div>
-                            <h1 className="text-2xl text-red-500 font-bold">{pending.recipientName}</h1>
-
-                        </div>
-                    
-                        <div className="text-gray-700 space-y-1 mb-4">
-
-                        <p> <span className="font-semibold">Location:</span>
-                            {pending.recipientDistrict},{pending.recipientUpazila}</p>
-                        <p> <span className="font-semibold">Blood Group:</span>
-                            {pending.bloodGroup}</p>
-                        <p> <span className="font-semibold">Date:</span>
-                            {pending.donationDate}</p>
-                        <p> <span className="font-semibold">Time:</span>
-                            {pending.donationTime}</p>
-
-
-                        </div>
-                        
-                        <div className="text-right">
-                            <Link to={`/pending-details/${pending._id}`}
-                            className="bg-red-500 text-white px-5 py-2 rounded-md hover:bg-red-700 transition-colors"
-                            >View  Details</Link>
-                        </div>
-
-                    </div>
-                  ))}
-
-
-                </div>
-                
-
-
-
-            </div>
-
-
-
+  return (
+    <section className="min-h-screen bg-slate-50 px-4 py-12 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-8 max-w-3xl">
+          <p className="text-sm font-semibold uppercase text-red-600">Donation requests</p>
+          <h1 className="mt-3 text-3xl font-bold text-slate-950 sm:text-5xl">Pending blood requests.</h1>
+          <p className="mt-4 text-base leading-7 text-slate-600">
+            Review active requests and open the details page when you are ready to donate.
+          </p>
         </div>
-    )
 
-}
+        {donations.length === 0 ? (
+          <div className="rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center text-slate-600">
+            No pending donation requests are available right now.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {donations.map((pending)=>(
+              <article key={pending._id} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h2 className="text-xl font-semibold text-slate-950">{pending.recipientName}</h2>
+                    <p className="mt-2 flex items-center gap-2 text-sm text-slate-600">
+                      <FaMapMarkerAlt className="text-slate-400" />
+                      {pending.recipientDistrict}, {pending.recipientUpazila}
+                    </p>
+                  </div>
+                  <span className="inline-flex items-center gap-2 rounded-md bg-red-50 px-3 py-2 text-sm font-bold text-red-700">
+                    <FaTint />
+                    {pending.bloodGroup}
+                  </span>
+                </div>
+
+                <div className="mt-5 grid gap-3 text-sm text-slate-600">
+                  <p className="flex items-center gap-2">
+                    <FaCalendarAlt className="text-slate-400" />
+                    {pending.donationDate}
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <FaClock className="text-slate-400" />
+                    {pending.donationTime}
+                  </p>
+                </div>
+
+                <Link
+                  to={`/pending-details/${pending._id}`}
+                  className="btn mt-5 w-full rounded-md border-red-600 bg-red-600 text-white hover:border-red-700 hover:bg-red-700"
+                >
+                  View Details
+                </Link>
+              </article>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+};
 
 export default BloodDonationRequests;

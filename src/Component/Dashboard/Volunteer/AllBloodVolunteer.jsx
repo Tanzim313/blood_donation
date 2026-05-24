@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import {  useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AuthContext } from "../../../Authprovider/AuthContext";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
@@ -8,13 +8,13 @@ const AllBloodVolunteer=()=>{
     
     const axios = useAxiosSecure();
     const queryClient = useQueryClient();
-    const {user} = use(AuthContext);
+    const {user} = useContext(AuthContext);
     const [statusFilter,setStatusFilter] = useState("all")
 
     const [page,setPage] = useState(1);
     const limit = 5;
 
-    const {data,isLoading,isError,refetch} = useQuery({
+    const {data,isLoading,isError} = useQuery({
     
             queryKey:["donations",user,statusFilter,page],
             enabled: !!user,
@@ -45,13 +45,6 @@ const AllBloodVolunteer=()=>{
                 const total = data?.total||0;
                 const totalPages = Math.ceil(total/limit);
         
-                useEffect(()=>{
-                    setPage(1);
-        
-                },[statusFilter]);
-
-    
-
         const statusMutation = useMutation({
             mutationFn: async({id,status})=>{
                 const res = await axios.patch(`donation-status/${id}`,{
@@ -93,7 +86,10 @@ const AllBloodVolunteer=()=>{
             <div className="mt-10 mb-10">
                 <select className="select select-bordered w-[280px]" 
                 value={statusFilter}
-                onChange={(e)=>setStatusFilter(e.target.value)}
+                onChange={(e)=>{
+                    setStatusFilter(e.target.value);
+                    setPage(1);
+                }}
                 >
 
                     <option value="all">All</option>

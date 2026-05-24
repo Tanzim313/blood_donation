@@ -1,4 +1,4 @@
-import React, { use, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -13,7 +13,7 @@ const FundingSuccess=()=>{
 
     const axios = useAxiosSecure();
     const queryClient = useQueryClient();
-    const {user} = use(AuthContext);
+    const {user} = useContext(AuthContext);
 
 
     const hasCalled = useRef(false);
@@ -46,7 +46,7 @@ const FundingSuccess=()=>{
             hasCalled.current = true;
             fundingMutation.mutate(session_id);
         }
-    },[session_id]);
+    },[session_id, fundingMutation]);
 
     return(
         <div className="p-40 text-center font-bold text-2xl">
