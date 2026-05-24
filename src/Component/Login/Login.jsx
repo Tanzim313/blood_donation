@@ -52,7 +52,7 @@ const Login = () => {
               Secure access for donors, hospitals, and volunteers
             </div>
             <div>
-              <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">Login to LifeFlow</h1>
+              <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">Login to BloodFinding</h1>
               <p className="mt-4 max-w-xl text-slate-300">
                 Manage your donor profile, create meaningful blood requests, and access hospital and volunteer dashboards in one modern platform.
               </p>
@@ -118,7 +118,7 @@ const Login = () => {
             </form>
 
             <p className="mt-6 text-center text-sm text-slate-500">
-              New to LifeFlow? <Link to="/register" className="font-semibold text-red-600 hover:text-red-700">Create an account</Link>
+              New to BloodFinding? <Link to="/register" className="font-semibold text-red-600 hover:text-red-700">Create an account</Link>
             </p>
           </div>
         </div>

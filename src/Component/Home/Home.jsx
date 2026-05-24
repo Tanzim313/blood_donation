@@ -23,7 +23,7 @@ const Home = () => {
               A practical workflow for donors and recipients.
             </h2>
             <p className="mt-4 text-base leading-7 text-slate-600">
-              LifeFlow keeps the public journey simple while giving donors, volunteers, and admins the tools they need to keep requests moving.
+              BloodFinding keeps the public journey simple while giving donors, volunteers, and admins the tools they need to keep requests moving.
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <Link

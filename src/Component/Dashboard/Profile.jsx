@@ -124,7 +124,7 @@ const Profile = () => {
             )}
             <div>
               <p className="text-sm font-semibold uppercase text-red-600">Member profile</p>
-              <h2 className="mt-2 text-3xl font-bold text-slate-950">{visibleData.name || user.displayName || "LifeFlow Member"}</h2>
+              <h2 className="mt-2 text-3xl font-bold text-slate-950">{visibleData.name || user.displayName || "BloodFinding Member"}</h2>
               <p className="mt-2 flex items-center gap-2 text-sm text-slate-500">
                 <FaEnvelope />
                 {user.email}

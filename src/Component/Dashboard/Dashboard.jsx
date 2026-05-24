@@ -61,7 +61,7 @@ const Dashboard = () => {
               </label>
               <div>
                 <p className="text-xs font-semibold uppercase text-red-600">{role || "member"} workspace</p>
-                <h1 className="text-lg font-bold text-slate-950 sm:text-2xl">LifeFlow Dashboard</h1>
+                <h1 className="text-lg font-bold text-slate-950 sm:text-2xl">BloodFinding Dashboard</h1>
               </div>
             </div>
 
@@ -72,7 +72,7 @@ const Dashboard = () => {
                 alt={user?.displayName || "User avatar"}
               />
               <div className="hidden text-right sm:block">
-                <p className="text-sm font-semibold text-slate-950">{user?.displayName || "LifeFlow User"}</p>
+                <p className="text-sm font-semibold text-slate-950">{user?.displayName || "BloodFinding User"}</p>
                 <p className="text-xs text-slate-500">{user?.email}</p>
               </div>
             </div>
@@ -88,9 +88,9 @@ const Dashboard = () => {
         <label htmlFor="dashboard-drawer" className="drawer-overlay"></label>
         <div className="flex min-h-full w-72 flex-col border-r border-slate-200 bg-slate-950 p-4 text-slate-300">
           <Link to="/" className="mb-8 flex items-center gap-3 rounded-lg bg-white/5 p-3 text-white">
-            <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-red-600 font-bold">LF</span>
+            <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-red-600 font-bold">BF</span>
             <div>
-              <p className="font-bold">LifeFlow</p>
+              <p className="font-bold">BloodFinding</p>
               <p className="text-xs text-slate-400">Donation operations</p>
             </div>
           </Link>

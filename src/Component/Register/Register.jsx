@@ -114,7 +114,7 @@ const Register = () => {
               Create a donor profile with district and upazila selection
             </div>
             <div>
-              <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">Join LifeFlow today</h1>
+              <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">Join BloodFinding today</h1>
               <p className="mt-4 max-w-xl text-slate-300">
                 Register as a donor to manage your profile, save your preferred location, and receive updates for blood requests near you.
               </p>

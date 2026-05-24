@@ -125,10 +125,10 @@ const Nabvar = () => {
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
         <Link to={user ? "/dashboard" : "/"} className="flex items-center gap-2 text-2xl font-extrabold tracking-tight text-slate-900">
           <span className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-red-600 text-white shadow-sm">
-            LF
+            BF
           </span>
           <div className="hidden sm:block">
-            <p className="text-sm uppercase tracking-[0.2em] text-red-600">LifeFlow</p>
+            <p className="text-sm uppercase tracking-[0.2em] text-red-600">BloodFinding</p>
             <p className="font-semibold text-slate-900">Blood Donation Platform</p>
           </div>
         </Link>

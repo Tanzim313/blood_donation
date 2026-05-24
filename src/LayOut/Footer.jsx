@@ -8,8 +8,8 @@ const Footer = () => {
       <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.2fr_0.8fr_0.8fr]">
         <div>
           <Link to="/" className="inline-flex items-center gap-3 text-white">
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-red-600 font-bold">LF</span>
-            <span className="font-semibold">LifeFlow</span>
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-red-600 font-bold">BF</span>
+            <span className="font-semibold">BloodFinding</span>
           </Link>
           <p className="mt-4 max-w-md text-sm leading-7 text-slate-400">
             A focused blood donation platform for donors, recipients, volunteers, and administrators.
@@ -39,12 +39,12 @@ const Footer = () => {
               <FaLinkedinIn />
             </a>
           </div>
-          <p className="mt-4 text-sm text-slate-400">support@lifeflow.com</p>
+          <p className="mt-4 text-sm text-slate-400">support@bloodfinding.com</p>
         </div>
       </div>
 
       <div className="mx-auto mt-10 max-w-7xl border-t border-slate-800 pt-6 text-sm text-slate-500">
-        &copy; {new Date().getFullYear()} LifeFlow. All rights reserved.
+        &copy; {new Date().getFullYear()} BloodFinding. All rights reserved.
       </div>
     </footer>
   );

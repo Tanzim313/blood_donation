@@ -29,7 +29,6 @@ const ContactUs = () => {
       <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.8fr_1fr]">
         <div>
           <p className="text-sm font-semibold uppercase text-red-600">Contact</p>
-          <h2 className="mt-3 text-3xl font-bold text-slate-950 sm:text-4xl">Talk to the LifeFlow team.</h2>
           <p className="mt-4 text-base leading-7 text-slate-600">
             Send feedback, report a workflow issue, or ask for support with donation requests.
           </p>
@@ -39,9 +38,9 @@ const ContactUs = () => {
               <FaPhoneAlt className="text-red-600" />
               <span className="font-semibold">01872 164554</span>
             </a>
-            <a href="mailto:support@lifeflow.com" className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 p-4 text-slate-700 hover:border-red-200 hover:bg-red-50">
+            <a href="mailto:support@bloodfinding.com" className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 p-4 text-slate-700 hover:border-red-200 hover:bg-red-50">
               <FaEnvelope className="text-red-600" />
-              <span className="font-semibold">support@lifeflow.com</span>
+              <span className="font-semibold">support@bloodfinding.com</span>
             </a>
           </div>
         </div>
